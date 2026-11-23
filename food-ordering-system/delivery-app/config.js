@@ -8,7 +8,7 @@ window.CONFIG = window.CONFIG || {};
             originApi = window.location.origin + '/api';
         }
     } catch(e){}
-    window.CONFIG.API_BASE = savedApi || originApi || window.CONFIG.API_BASE || 'https://late-proudly-agenda-monsters.trycloudflare.com/api';
+    window.CONFIG.API_BASE = savedApi || originApi || 'https://cravebites-j9yh.onrender.com/api';
     window.CONFIG.TOKEN_KEY = 'dabba_delivery_token';
 })();
 var CONFIG = window.CONFIG;
