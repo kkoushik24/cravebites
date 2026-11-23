@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+.env
+venv/
+env/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.apk.idsig
+
+# Editor
+.vscode/
+.idea/
+
+# Binaries
+cloudflared.exe
+*.exe
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

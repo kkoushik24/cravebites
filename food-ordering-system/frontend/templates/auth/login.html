@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CraveBites - Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E2DBF0;
+    font-family: 'DM Sans', sans-serif;
+    color: #1E1233;
+}
+.h { font-family: 'Bricolage Grotesque', sans-serif; }
+.card {
+    width: 100%;
+    max-width: 420px;
+    background: #F6F3FB;
+    border-radius: 28px;
+    padding: 32px 28px;
+    box-sizing: border-box;
+    box-shadow: 0 20px 40px rgba(30,18,51,0.15);
+    margin: 20px;
+}
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 28px;
+    font-weight: 800;
+    color: #1E1233;
+    margin-bottom: 4px;
+}
+.logo span { color: #D8391F; }
+.tagline { font-size: 14px; color: #6A5F7E; margin-bottom: 24px; }
+.form-group { margin-bottom: 16px; }
+label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #1E1233; }
+input {
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px solid #D5CCE6;
+    background: #fff;
+    padding: 0 16px;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: 15px;
+    color: #1E1233;
+    transition: border-color .2s;
+}
+input:focus { outline: none; border-color: #D8391F; }
+.btn-primary {
+    width: 100%;
+    height: 52px;
+    border-radius: 16px;
+    border: none;
+    background: #D8391F;
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform .15s, background .2s;
+}
+.btn-primary:hover { background: #ba2f17; transform: translateY(-2px); }
+.btn-primary:active { transform: scale(0.98); }
+.demo-box {
+    margin-top: 24px;
+    padding: 16px;
+    background: #ECE6F7;
+    border-radius: 18px;
+    font-size: 13px;
+}
+.demo-box-title { font-weight: 700; margin-bottom: 10px; color: #1E1233; }
+.demo-btn-group { display: flex; flex-direction: column; gap: 8px; }
+.btn-demo {
+    background: #fff;
+    border: 1px solid #D5CCE6;
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1E1233;
+    transition: all .2s;
+}
+.btn-demo:hover {
+    border-color: #D8391F;
+    background: #FFF9F9;
+    transform: translateY(-1px);
+}
+.btn-demo span.role {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+.role-cust { background: #FFEDBF; color: #7A4300; }
+.role-rest { background: #D9EFE1; color: #176B3A; }
+.role-deli { background: #FFD9E8; color: #9A1B55; }
+.error-msg {
+    color: #D8391F;
+    background: #FFEBE8;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: none;
+}
+.footer-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #6A5F7E;
+}
+.footer-links a { color: #D8391F; text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="logo h">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#D8391F"></span>
+        CraveBites <span>Online</span>
+    </div>
+    <div class="tagline">Sign in to your CraveBites account</div>
+
+    <div id="error-box" class="error-msg"></div>
+
+    <form id="login-form">
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required placeholder="name@dabba.com">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+
+    <div class="demo-box">
+        <div class="demo-box-title">⚡ Quick 1-Click Demo Logins</div>
+        <div class="demo-btn-group">
+            <button class="btn-demo" type="button" onclick="fillDemo('customer@dabba.com', 'password123')">
+                <span>Aarav Sharma</span>
+                <span class="role role-cust">Customer</span>
+            </button>
+            <button class="btn-demo" type="button" onclick="fillDemo('restaurant@dabba.com', 'password123')">
+                <span>Ember &amp; Rice</span>
+                <span class="role role-rest">Restaurant</span>
+            </button>
+            <button class="btn-demo" type="button" onclick="fillDemo('delivery@dabba.com', 'password123')">
+                <span>Ravi Kumar</span>
+                <span class="role role-deli">Delivery Partner</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="footer-links">
+        Don't have an account? <a href="/signup">Sign up here</a>
+    </div>
+</div>
+
+<script>
+function fillDemo(email, pwd) {
+    document.getElementById('email').value = email;
+    document.getElementById('password').value = pwd;
+    document.getElementById('login-form').dispatchEvent(new Event('submit'));
+}
+
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errBox = document.getElementById('error-box');
+    errBox.style.display = 'none';
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password})
+        });
+        const data = await res.json();
+        if (data.success) {
+            window.location.href = data.redirect_url || '/';
+        } else {
+            errBox.textContent = data.error || 'Failed to sign in.';
+            errBox.style.display = 'block';
+        }
+    } catch (err) {
+        errBox.textContent = 'Server connection error. Please try again.';
+        errBox.style.display = 'block';
+    }
+});
+</script>
+</body>
+</html>
+

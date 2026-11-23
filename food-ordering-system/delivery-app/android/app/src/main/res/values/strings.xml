@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Crave Rider</string>
+    <string name="title_activity_main">Crave Rider</string>
+    <string name="package_name">com.dabba.delivery</string>
+    <string name="custom_url_scheme">com.dabba.delivery</string>
+</resources>

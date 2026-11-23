@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CraveBites - Restaurant Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.app{font-family:'DM Sans',sans-serif;color:#1E1233}
+.h{font-family:'Bricolage Grotesque',sans-serif}
+button{font-family:inherit;cursor:pointer}
+.sn{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 12px;border:0;border-radius:12px;background:none;color:#CFC6E3;font-size:15px;text-align:left}
+.sn.on{background:#D8391F;color:#fff;font-weight:700}
+.badge{background:#FFC233;color:#1E1233;border-radius:999px;font-size:12px;font-weight:800;padding:1px 8px}
+.stat{background:#fff;border:1px solid #E2DBF0;border-radius:18px;padding:18px}
+.lbl{font-size:13px;color:#6A5F7E}
+.col{background:#ECE6F7;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:2px 4px;font-weight:700;font-size:15px}
+.oc{background:#fff;border-radius:14px;padding:14px;border:1px solid #E2DBF0;display:flex;flex-direction:column;gap:8px}
+.b{height:44px;border-radius:12px;font-weight:700;font-size:14px;padding:0 16px;border:1px solid #D5CCE6;background:#fff;color:#1E1233}
+.b.p{background:#D8391F;border-color:#D8391F;color:#fff}
+.panel{background:#fff;border:1px solid #E2DBF0;border-radius:18px;padding:18px}
+.sw{width:52px;height:44px;border:0;background:none;padding:0;display:flex;align-items:center}
+.sw i{display:block;width:44px;height:26px;border-radius:13px;background:#176B3A;position:relative}
+.sw i::after{content:"";position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff}
+.sw.off i{background:#A79FBA}
+.sw.off i::after{right:auto;left:3px}
+.col{perspective:900px}
+.oc{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.oc:hover{transform:rotateX(5deg) rotateY(-4deg) translateY(-5px);box-shadow:0 20px 32px rgba(30,18,51,.2)}
+.oc.new{animation:slidein .8s cubic-bezier(.2,.8,.2,1) backwards,ring 2s 1s infinite}
+.oc.new+.oc.new{animation-delay:.3s,1.3s}
+@keyframes slidein{from{opacity:0;transform:translateX(-44px) rotateY(28deg)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(255,159,28,.75)}70%,100%{box-shadow:0 0 0 14px rgba(255,159,28,0)}}
+.stat{animation:slidein .7s backwards;transition:transform .3s}
+.stat:hover{transform:translateY(-5px)}
+.stat:nth-child(2){animation-delay:.1s}.stat:nth-child(3){animation-delay:.2s}.stat:nth-child(4){animation-delay:.3s}
+div[role="img"]>div{transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes grow{from{transform:scaleY(0)}}
+div[role="img"]>div:nth-child(2){animation-delay:.08s}div[role="img"]>div:nth-child(3){animation-delay:.16s}div[role="img"]>div:nth-child(4){animation-delay:.24s}div[role="img"]>div:nth-child(5){animation-delay:.32s}div[role="img"]>div:nth-child(6){animation-delay:.4s}div[role="img"]>div:nth-child(7){animation-delay:.48s}div[role="img"]>div:nth-child(8){animation-delay:.56s}
+.b,.sn{transition:transform .15s,background .2s}
+.b:hover{transform:translateY(-2px)}.b:active{transform:scale(.95)}
+.sn:hover{background:rgba(255,255,255,.1)}.sn.on:hover{background:#D8391F}
+.live{animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.3}}
+.sw i,.sw i::after{transition:all .25s}
+.badge{animation:pop 2s infinite}
+@keyframes pop{50%{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" style="min-height:920px;display:grid;grid-template-columns:232px 1fr;background:#F6F3FB">
+<div style="background:#1E1233;color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:6px">
+<div class="h" style="font-size:26px;font-weight:800;padding:0 12px">CraveBites <span style="color:#FFC233">Restaurant</span></div>
+<div style="font-size:13px;color:#CFC6E3;padding:0 12px 18px">Ember &amp; Rice, 4th Block</div>
+<button class="sn on"><span>Live orders</span><span class="badge">3</span></button>
+<button class="sn"><span>Menu</span></button>
+<button class="sn"><span>Stock</span></button>
+<button class="sn"><span>Earnings</span></button>
+<button class="sn"><span>Reviews</span></button>
+<button class="sn"><span>Settings</span></button>
+<div style="flex:1"></div>
+<div style="background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700">Accepting orders<button class="sw" role="switch" aria-checked="true" aria-label="Accepting orders"><i></i></button></div>
+</div>
+<div style="padding:28px 32px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+<div><h1 class="h" style="margin:0;font-size:36px;font-weight:800;letter-spacing:-.02em"><span class="live" style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#D8391F;margin-right:12px;vertical-align:middle"></span>Live orders</h1><div style="font-size:14px;color:#6A5F7E;margin-top:4px">Sunday, 22 November</div></div>
+<div style="display:flex;gap:12px;align-items:center"><span style="background:#FFEDBF;color:#7A4300;border-radius:999px;padding:10px 16px;font-size:14px;font-weight:700">Kitchen is busy, prep time 18 min</span><button class="b">Pause orders</button></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+<div class="stat"><div class="lbl">Orders today</div><div class="h" style="font-size:34px;font-weight:800">128</div><div style="font-size:13px;color:#176B3A;font-weight:700">12% above last Sunday</div></div>
+<div class="stat"><div class="lbl">Revenue</div><div class="h" style="font-size:34px;font-weight:800">₹41,860</div><div style="font-size:13px;color:#176B3A;font-weight:700">₹327 average order</div></div>
+<div class="stat"><div class="lbl">Average prep time</div><div class="h" style="font-size:34px;font-weight:800">14 min</div><div style="font-size:13px;color:#6A5F7E">Target is 15 min</div></div>
+<div class="stat"><div class="lbl">Rating today</div><div class="h" style="font-size:34px;font-weight:800">4.6</div><div style="font-size:13px;color:#6A5F7E">From 37 reviews</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+<div class="col">
+<div class="ch"><span>New</span><span class="badge">2</span></div>
+<div class="oc new"><div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E"><b style="color:#1E1233">#2843</b><span>2 min ago</span></div><div style="font-size:15px">1 Chicken Dum Biryani, 2 Raita</div><div style="font-weight:700">₹498, paid online</div><div style="display:flex;gap:8px"><button class="b" style="flex:1">Reject</button><button class="b p" style="flex:1">Accept</button></div></div>
+<div class="oc new"><div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E"><b style="color:#1E1233">#2844</b><span>just now</span></div><div style="font-size:15px">2 Seekh Kebab, 1 Butter Naan</div><div style="font-weight:700">₹360, cash on delivery</div><div style="display:flex;gap:8px"><button class="b" style="flex:1">Reject</button><button class="b p" style="flex:1">Accept</button></div></div>
+</div>
+<div class="col">
+<div class="ch"><span>Preparing</span><span class="badge" style="background:#fff">2</span></div>
+<div class="oc"><div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E"><b style="color:#1E1233">#2840</b><span style="background:#FFEDBF;color:#7A4300;border-radius:8px;padding:2px 8px;font-weight:700">08:20 left</span></div><div style="font-size:15px">3 Veg Biryani</div><div style="font-weight:700">₹627, paid online</div><button class="b p">Mark ready</button></div>
+<div class="oc"><div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E"><b style="color:#1E1233">#2839</b><span style="background:#FFEDBF;color:#7A4300;border-radius:8px;padding:2px 8px;font-weight:700">03:05 left</span></div><div style="font-size:15px">1 Mutton Biryani, 1 Phirni</div><div style="font-weight:700">₹449, paid online</div><button class="b p">Mark ready</button></div>
+</div>
+<div class="col">
+<div class="ch"><span>Ready for pickup</span><span class="badge" style="background:#fff">1</span></div>
+<div class="oc"><div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E"><b style="color:#1E1233">#2841</b><span>Waiting 1 min</span></div><div style="font-size:15px">1 Chicken Dum Biryani, 1 Raita</div><div style="display:flex;align-items:center;gap:10px;font-size:14px"><span style="width:32px;height:32px;border-radius:50%;background:#FFC233;font-weight:800;display:flex;align-items:center;justify-content:center">R</span>Ravi arrives in 3 min</div><button class="b">Hand over to rider</button></div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
+<div class="panel">
+<div style="font-weight:700;font-size:16px">Orders by hour</div>
+<div role="img" aria-label="Bar chart of orders per hour, peaking at 8 pm" style="display:flex;align-items:flex-end;gap:14px;height:110px;margin-top:14px">
+<div style="flex:1;height:30px;background:#CBBFE6;border-radius:6px"></div><div style="flex:1;height:44px;background:#CBBFE6;border-radius:6px"></div><div style="flex:1;height:62px;background:#CBBFE6;border-radius:6px"></div><div style="flex:1;height:50px;background:#CBBFE6;border-radius:6px"></div><div style="flex:1;height:80px;background:#CBBFE6;border-radius:6px"></div><div style="flex:1;height:110px;background:#D8391F;border-radius:6px"></div><div style="flex:1;height:96px;background:#CBBFE6;border-radius:6px"></div><div style="flex:1;height:58px;background:#CBBFE6;border-radius:6px"></div>
+</div>
+<div style="display:flex;gap:14px;font-size:12px;color:#6A5F7E;margin-top:6px"><span style="flex:1">5 pm</span><span style="flex:1">6</span><span style="flex:1">7</span><span style="flex:1">8</span><span style="flex:1">9</span><span style="flex:1">10</span><span style="flex:1">11</span><span style="flex:1">12 am</span></div>
+</div>
+<div class="panel">
+<div style="font-weight:700;font-size:16px">Running low</div>
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:15px"><span>Chicken Dum Biryani, 6 left</span><button class="sw" role="switch" aria-checked="true" aria-label="Chicken Dum Biryani available"><i></i></button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:15px"><span>Mutton Biryani, 2 left</span><button class="sw" role="switch" aria-checked="true" aria-label="Mutton Biryani available"><i></i></button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;font-size:15px"><span>Phirni, sold out</span><button class="sw off" role="switch" aria-checked="false" aria-label="Phirni available"><i></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

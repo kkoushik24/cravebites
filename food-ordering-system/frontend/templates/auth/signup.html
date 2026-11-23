@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CraveBites - Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E2DBF0;
+    font-family: 'DM Sans', sans-serif;
+    color: #1E1233;
+}
+.h { font-family: 'Bricolage Grotesque', sans-serif; }
+.card {
+    width: 100%;
+    max-width: 440px;
+    background: #F6F3FB;
+    border-radius: 28px;
+    padding: 32px 28px;
+    box-sizing: border-box;
+    box-shadow: 0 20px 40px rgba(30,18,51,0.15);
+    margin: 20px;
+}
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 28px;
+    font-weight: 800;
+    color: #1E1233;
+    margin-bottom: 4px;
+}
+.logo span { color: #D8391F; }
+.tagline { font-size: 14px; color: #6A5F7E; margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: #1E1233; }
+input, select {
+    width: 100%;
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid #D5CCE6;
+    background: #fff;
+    padding: 0 16px;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: 15px;
+    color: #1E1233;
+    transition: border-color .2s;
+}
+input:focus, select:focus { outline: none; border-color: #D8391F; }
+.btn-primary {
+    width: 100%;
+    height: 50px;
+    border-radius: 16px;
+    border: none;
+    background: #D8391F;
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: transform .15s, background .2s;
+}
+.btn-primary:hover { background: #ba2f17; transform: translateY(-2px); }
+.error-msg {
+    color: #D8391F;
+    background: #FFEBE8;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: none;
+}
+.footer-links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #6A5F7E;
+}
+.footer-links a { color: #D8391F; text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="logo h">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#D8391F"></span>
+        CraveBites <span>Sign Up</span>
+    </div>
+    <div class="tagline">Create an account to join the food ordering network</div>
+
+    <div id="error-box" class="error-msg"></div>
+
+    <form id="signup-form">
+        <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <input type="text" id="full_name" required placeholder="e.g. Rahul Sharma">
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required placeholder="rahul@example.com">
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" required placeholder="9876543210">
+        </div>
+        <div class="form-group">
+            <label for="role">Register As</label>
+            <select id="role">
+                <option value="customer">Customer (Order Delicious Food)</option>
+                <option value="restaurant">Restaurant (Manage Kitchen &amp; Menu)</option>
+                <option value="delivery_partner">Delivery Partner (Fulfill Deliveries)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="password">Password (min 6 characters)</label>
+            <input type="password" id="password" minlength="6" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primary">Create Account</button>
+    </form>
+
+    <div class="footer-links">
+        Already have an account? <a href="/login">Sign in</a>
+    </div>
+</div>
+
+<script>
+document.getElementById('signup-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errBox = document.getElementById('error-box');
+    errBox.style.display = 'none';
+
+    const full_name = document.getElementById('full_name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const role = document.getElementById('role').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        const res = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({full_name, email, phone, role, password})
+        });
+        const data = await res.json();
+        if (data.success) {
+            window.location.href = data.redirect_url || '/';
+        } else {
+            errBox.textContent = data.error || 'Failed to create account.';
+            errBox.style.display = 'block';
+        }
+    } catch (err) {
+        errBox.textContent = 'Server connection error. Please try again.';
+        errBox.style.display = 'block';
+    }
+});
+</script>
+</body>
+</html>
+

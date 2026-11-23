@@ -1,0 +1,1154 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#1E1233">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Crave Rider - Delivery Partner App</title>
+    <link rel="manifest" href="/manifest.json">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script>
+        window.CONFIG = window.CONFIG || {};
+        (function() {
+            var savedApi = null;
+            try { savedApi = localStorage.getItem('cravebites_rider_api_base'); } catch(e){}
+            var originApi = '';
+            try {
+                if (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http') && !window.location.pathname.includes('/android_asset/')) {
+                    originApi = window.location.origin + '/api';
+                }
+            } catch(e){}
+            window.CONFIG.API_BASE = savedApi || originApi || 'https://late-proudly-agenda-monsters.trycloudflare.com/api';
+            window.CONFIG.TOKEN_KEY = 'dabba_delivery_token';
+        })();
+    </script>
+    <script src="/config.js"></script>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background: #E2DBF0;
+            font-family: 'DM Sans', sans-serif;
+            color: #1E1233;
+            -webkit-tap-highlight-color: transparent
+        }
+
+        .app {
+            font-family: 'DM Sans', sans-serif;
+            color: #1E1233;
+            width: 100%;
+            max-width: 440px;
+            height: 100vh;
+            height: 100dvh;
+            box-sizing: border-box;
+            background: #E8E2F4;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative
+        }
+
+        .h {
+            font-family: 'Bricolage Grotesque', sans-serif
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            min-height: 44px
+        }
+
+        .pill {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 999px;
+            padding: 0 18px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 6px 18px -2px rgba(30, 18, 51, 0.16);
+            border: 0;
+            transition: transform .2s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s ease;
+        }
+
+        .pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px -2px rgba(30, 18, 51, 0.22);
+        }
+
+        .pill:active {
+            transform: scale(0.96)
+        }
+
+        .kpi {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #E2DBF0;
+            border-radius: 18px;
+            padding: 14px 16px;
+            box-shadow: 0 4px 14px -4px rgba(30, 18, 51, 0.06);
+            transition: transform .28s cubic-bezier(.34, 1.56, .64, 1), box-shadow .28s ease;
+        }
+
+        .kpi:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -6px rgba(30, 18, 51, 0.12);
+        }
+
+        .kpi b {
+            display: block;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 22px;
+            font-weight: 800
+        }
+
+        .kpi span {
+            font-size: 12px;
+            color: #6A5F7E
+        }
+
+        .step {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            box-sizing: border-box;
+            flex: none;
+            margin-top: 3px;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8)
+        }
+
+        .map3d {
+            perspective: 800px;
+            overflow: hidden;
+            height: 350px;
+            background: radial-gradient(circle at 50% 35%, #EDE6F9 0%, #D8CEEE 100%)
+        }
+
+        .plane {
+            transform-origin: 50% 100%;
+            transform: rotateX(42deg) scale(1.45) translateY(-8px);
+            animation: drift 7s ease-in-out infinite alternate
+        }
+
+        @keyframes drift {
+            to {
+                transform: rotateX(48deg) scale(1.45) translateY(2px)
+            }
+        }
+
+        .route {
+            stroke-dasharray: 640;
+            stroke-dashoffset: 640;
+            animation: draw 2.4s .5s ease-out forwards
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0
+            }
+        }
+
+        .pulse {
+            transform-box: fill-box;
+            transform-origin: center;
+            animation: pulse 1.8s infinite
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                opacity: .7
+            }
+
+            to {
+                transform: scale(3.2);
+                opacity: 0
+            }
+        }
+
+        .sheet {
+            animation: up .9s .2s cubic-bezier(.2, .8, .2, 1) backwards
+        }
+
+        @keyframes up {
+            from {
+                transform: translateY(140px);
+                opacity: 0
+            }
+        }
+
+        .nudge {
+            animation: nudge 1.8s ease-in-out infinite
+        }
+
+        @keyframes nudge {
+            50% {
+                transform: translateX(18px)
+            }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #A99FC4 0, #fff 50%, #A99FC4 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: sh 2.4s linear infinite
+        }
+
+        @keyframes sh {
+            to {
+                background-position: -200% 0
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important
+            }
+
+            .route {
+                stroke-dashoffset: 0
+            }
+        }
+
+        /* Slider Bar Component */
+        .slider-track {
+            position: relative;
+            height: 64px;
+            border-radius: 32px;
+            background: linear-gradient(135deg, #1E1233 0%, #2D184E 100%);
+            box-shadow: 0 10px 28px -4px rgba(30, 18, 51, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            padding-left: 40px;
+            user-select: none;
+            touch-action: none;
+            overflow: hidden;
+        }
+
+        .slider-handle {
+            position: absolute;
+            left: 6px;
+            top: 6px;
+            width: 52px;
+            height: 52px;
+            min-height: 52px;
+            border-radius: 50%;
+            border: 0;
+            background: linear-gradient(135deg, #FFD266 0%, #FFB014 100%);
+            color: #1E1233;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            box-shadow: 0 4px 14px rgba(255, 176, 20, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+            transition: box-shadow .2s, transform .15s;
+        }
+
+        .slider-handle:active {
+            cursor: grabbing;
+            box-shadow: 0 0 24px rgba(255, 194, 51, 0.8), 0 0 0 2px #fff inset;
+            transform: scale(1.05);
+        }
+
+        /* Waiting view */
+        .waiting-view {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px 20px;
+            gap: 12px;
+            flex: 1
+        }
+
+        .radar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #FFEDBF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative
+        }
+
+        .radar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid #D8391F;
+            animation: ripple 2s infinite
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0
+            }
+        }
+
+        .toast {
+            position: absolute;
+            top: max(20px, env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1E1233;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 999;
+            box-shadow: 0 8px 20px rgba(30, 18, 51, 0.3);
+            display: none;
+            white-space: nowrap
+        }
+
+        /* Disconnected Screen */
+        .offline-card {
+            position: absolute;
+            inset: 0;
+            background: #E8E2F4;
+            z-index: 950;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            text-align: center;
+            gap: 16px
+        }
+
+        .offline-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #FFEBE8;
+            color: #D8391F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px
+        }
+
+        .retry-btn {
+            background: #D8391F;
+            color: #fff;
+            border: 0;
+            border-radius: 14px;
+            padding: 0 24px;
+            height: 48px;
+            font-weight: 700;
+            font-size: 15px
+        }
+
+        /* Auth Modal Overlay */
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(30, 18, 51, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 900;
+            display: none;
+            align-items: flex-end;
+            justify-content: center
+        }
+
+        .modal-sheet {
+            background: #fff;
+            border-radius: 28px 28px 0 0;
+            padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 -10px 30px rgba(30, 18, 51, 0.25);
+            animation: slideUp .3s ease
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%)
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+        <div id="toast" class="toast"></div>
+
+        <!-- OFFLINE / DISCONNECTED SCREEN -->
+        <div id="offline-card" class="offline-card">
+            <div class="offline-icon">🔌</div>
+            <div class="h" style="font-size:24px;font-weight:800">Cannot reach the server</div>
+            <div style="font-size:14px;color:#6A5F7E;line-height:1.4">
+                Connection to backend server lost. Please check your internet connection or update the Cloudflare URL below:
+            </div>
+
+            <div style="width:100%;max-width:320px;background:#fff;padding:14px;border-radius:16px;border:1px solid #D5CCE6;text-align:left;box-shadow:0 4px 12px rgba(30,18,51,0.06);box-sizing:border-box">
+                <label style="font-size:11px;font-weight:700;color:#6A5F7E;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px">⚙️ Cloudflare / Server URL</label>
+                <input id="server-url-input" type="text" style="width:100%;height:40px;border-radius:10px;border:1px solid #D5CCE6;padding:0 12px;box-sizing:border-box;font-size:13px;font-family:inherit" placeholder="https://xxxx.trycloudflare.com/api">
+                <button onclick="updateServerUrl()" style="margin-top:10px;width:100%;height:40px;border-radius:10px;border:0;background:#1E1233;color:#fff;font-weight:700;font-size:13px;cursor:pointer">
+                    💾 Save &amp; Connect
+                </button>
+            </div>
+
+            <button class="retry-btn" onclick="retryConnection()" style="margin-top:4px">Retry Connection</button>
+            <div style="font-size:12px;color:#9E94B5">Auto-reconnecting every 3s...</div>
+        </div>
+
+        <!-- AUTH OVERLAY (if not logged in) -->
+        <div id="auth-modal" class="modal-overlay">
+            <div class="modal-sheet">
+                <div class="h" style="font-size:24px;font-weight:800;color:#1E1233">Crave Rider Login</div>
+                <div style="font-size:13px;color:#6A5F7E;margin-top:2px;margin-bottom:16px">Deliver orders across
+                    Bengaluru &amp; earn instant payouts</div>
+
+                <div id="auth-error"
+                    style="color:#D8391F;background:#FFEBE8;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;margin-bottom:12px;display:none">
+                </div>
+
+                <button onclick="loginAsDemoDelivery()"
+                    style="height:48px;width:100%;border-radius:14px;border:0;background:#D8391F;color:#fff;font-weight:700;font-size:15px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+                    <span>⚡ 1-Click Demo Login (Ravi - Delivery)</span>
+                </button>
+
+                <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#6A5F7E;margin:10px 0">
+                    <span style="flex:1;height:1px;background:#D5CCE6"></span>or email sign in<span
+                        style="flex:1;height:1px;background:#D5CCE6"></span>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <input id="login-email" type="email" value="delivery@dabba.com" placeholder="Email"
+                        style="height:44px;border-radius:12px;border:1px solid #D5CCE6;padding:0 14px;font-size:14px">
+                    <input id="login-pwd" type="password" value="password123" placeholder="Password"
+                        style="height:44px;border-radius:12px;border:1px solid #D5CCE6;padding:0 14px;font-size:14px">
+                    <button onclick="loginWithCredentials()" class="pill"
+                        style="background:#1E1233;color:#fff;justify-content:center;height:44px">Sign In</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D Map Section -->
+        <div style="position:relative;height:340px;flex:none">
+            <div class="map3d">
+                <div class="plane">
+                    <svg width="390" height="340" viewBox="0 0 390 340" role="img"
+                        aria-label="Route from restaurant to customer, 3.2 km" style="display:block">
+                        <rect width="390" height="340" fill="#E8E2F4" />
+                        <rect x="250" y="40" width="110" height="90" rx="14" fill="#C7E6CF" />
+                        <rect x="20" y="190" width="90" height="80" rx="14" fill="#C7E6CF" />
+                        <g stroke="#fff" stroke-width="14" stroke-linecap="round" fill="none">
+                            <path d="M-10 110H400" />
+                            <path d="M-10 240H400" />
+                            <path d="M90 -10V350" />
+                            <path d="M230 -10V350" />
+                            <path d="M340 -10V350" />
+                        </g>
+                        <path class="route" d="M90 240V110H230V240H340" stroke="#D8391F" stroke-width="6"
+                            stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                        <circle class="pulse" cx="90" cy="240" r="14" fill="#FFC233" />
+                        <circle cx="90" cy="240" r="14" fill="#FFC233" stroke="#1E1233" stroke-width="3" />
+                        <rect x="326" y="226" width="28" height="28" rx="8" fill="#1E1233" />
+                        <circle cx="230" cy="110" r="9" fill="#fff" stroke="#D8391F" stroke-width="4" />
+                        <circle r="8" fill="#1E1233" stroke="#fff" stroke-width="3">
+                            <animateMotion dur="6s" repeatCount="indefinite" path="M90 240V110H230V240H340" />
+                        </circle>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Floating Top Status Pills -->
+            <div
+                style="position:absolute;top:max(16px, env(safe-area-inset-top));left:16px;right:16px;display:flex;justify-content:space-between;z-index:20">
+                <button class="pill" id="online-pill" onclick="toggleOnlineStatus()">
+                    <span id="online-dot" style="width:10px;height:10px;border-radius:50%;background:#176B3A"></span>
+                    <span id="online-text">You're online</span>
+                </button>
+                <div class="pill" id="earnings-pill">₹1,240 today</div>
+            </div>
+
+            <div style="position:absolute;top:calc(max(16px, env(safe-area-inset-top)) + 50px);right:16px;z-index:20">
+                <button onclick="logout()"
+                    style="background:#fff;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:700;color:#D8391F;border:0;box-shadow:0 2px 6px rgba(30,18,51,0.15)">Logout</button>
+            </div>
+        </div>
+
+        <!-- Bottom Sheet -->
+        <div class="sheet"
+            style="flex:1;margin-top:-28px;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;position:relative;z-index:30;overflow-y:auto">
+            <div style="width:40px;height:4px;border-radius:2px;background:#D5CCE6;align-self:center"></div>
+
+            <!-- ACTIVE DELIVERY VIEW -->
+            <div id="active-task-view" style="display:flex;flex-direction:column;gap:14px;flex:1">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                    <div>
+                        <h1 class="h" id="task-headline"
+                            style="margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em">New delivery</h1>
+                        <div id="task-subline" style="font-size:13px;color:#6A5F7E;margin-top:2px">Order #2841, 2 items
+                        </div>
+                    </div>
+                    <span id="task-payout"
+                        style="background:#FFEDBF;color:#7A4300;border-radius:12px;padding:6px 12px;font-weight:800;font-size:18px">₹68</span>
+                </div>
+
+                <!-- Task Status Alert Banner -->
+                <div id="task-status-banner"
+                    style="display:none;padding:12px 14px;border-radius:14px;font-size:13px;font-weight:600;align-items:center;gap:10px">
+                </div>
+
+                <!-- 3 KPI Cards -->
+                <div style="display:flex;gap:10px">
+                    <div class="kpi"><b id="kpi-distance">3.2 km</b><span>Total distance</span></div>
+                    <div class="kpi"><b id="kpi-est-time">14 min</b><span>Est. time</span></div>
+                    <div class="kpi"><b id="kpi-to-pickup">6 min</b><span>To pickup</span></div>
+                </div>
+
+                <!-- 2-Step Timeline -->
+                <div style="position:relative;display:flex;flex-direction:column;gap:16px">
+                    <div style="position:absolute;left:7px;top:14px;bottom:30px;width:2px;background:#D5CCE6"></div>
+
+                    <!-- Step 1: Restaurant Pickup -->
+                    <div class="step">
+                        <span class="dot" id="dot-pickup" style="background:#FFC233;border:3px solid #1E1233"></span>
+                        <div style="flex:1">
+                            <div style="font-weight:700;font-size:15px" id="pickup-rest-name">Ember &amp; Rice</div>
+                            <div style="font-size:12px;color:#6A5F7E" id="pickup-rest-addr">Pickup, 4th Block Market
+                            </div>
+                        </div>
+                        <button aria-label="Call restaurant" onclick="callEntity('restaurant')"
+                            style="width:44px;height:44px;border-radius:50%;border:1px solid #D5CCE6;background:#fff;display:flex;align-items:center;justify-content:center;color:#1E1233">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path
+                                    d="M22 17v3a2 2 0 01-2 2A18 18 0 012 4a2 2 0 012-2h3l2 5-2 1a12 12 0 006 6l1-2z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Customer Drop -->
+                    <div class="step">
+                        <span class="dot" id="dot-drop" style="background:#1E1233"></span>
+                        <div style="flex:1">
+                            <div style="font-weight:700;font-size:15px" id="drop-cust-name">Lakeview Apartments</div>
+                            <div style="font-size:12px;color:#6A5F7E" id="drop-cust-addr">Drop, Flat 204, Tower B</div>
+                        </div>
+                        <button aria-label="Call customer" onclick="callEntity('customer')"
+                            style="width:44px;height:44px;border-radius:50%;border:1px solid #D5CCE6;background:#fff;display:flex;align-items:center;justify-content:center;color:#1E1233">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path
+                                    d="M22 17v3a2 2 0 01-2 2A18 18 0 012 4a2 2 0 012-2h3l2 5-2 1a12 12 0 006 6l1-2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="flex:1"></div>
+
+                <!-- Slide to Confirm Control -->
+                <div class="slider-track" id="slider-track">
+                    <span class="shimmer" id="slider-text">Slide to confirm pickup</span>
+                    <button class="slider-handle nudge" id="slider-btn" aria-label="Confirm slide action"
+                        onclick="simulateSlide()">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 6l6 6-6 6" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- WAITING FOR DELIVERY VIEW -->
+            <div id="waiting-task-view" class="waiting-view">
+                <div class="radar">
+                    <span class="h" style="font-size:24px;color:#D8391F">🛵</span>
+                </div>
+                <div class="h" style="font-size:20px;font-weight:800">Waiting for next order</div>
+                <div style="font-size:13px;color:#6A5F7E;line-height:1.4">You are online in Koramangala. Orders ready
+                    for pickup will appear automatically.</div>
+            </div>
+
+            <!-- Footer Stats -->
+            <div style="display:flex;justify-content:center;gap:18px;font-size:13px;color:#6A5F7E">
+                <span id="trips-today-text">0 trips today</span>
+                <span id="hours-today-text">5.2 hrs online</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- INCOMING PICKUP REQUEST MODAL -->
+    <div id="request-modal"
+        style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(30,18,51,0.78);backdrop-filter:blur(8px);z-index:999;align-items:center;justify-content:center;padding:20px">
+        <div
+            style="background:#fff;border-radius:28px;padding:26px 22px;width:100%;max-width:360px;box-shadow:0 24px 60px rgba(30,18,51,0.5),0 0 0 1px rgba(255,255,255,0.8) inset;text-align:center;animation:slideDown .35s cubic-bezier(.34,1.56,.64,1);perspective:700px">
+            <div
+                style="display:inline-flex;align-items:center;gap:6px;background:#FFF0ED;color:#D8391F;border-radius:999px;padding:4px 12px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px">
+                <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D8391F"
+                    class="pulse"></span>
+                Live Broadcast
+            </div>
+            <div
+                style="width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#FFEBE8 0%,#FFD8D2 100%);color:#D8391F;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 10px;box-shadow:0 8px 20px rgba(216,57,31,0.22)">
+                🛵</div>
+            <div class="h" style="font-size:22px;font-weight:800;color:#1E1233">New Delivery Request</div>
+            <div style="font-size:13px;color:#6A5F7E;margin-top:2px">Pickup from <b id="req-rest-name"
+                    style="color:#1E1233">Ember &amp; Rice</b></div>
+
+            <div
+                style="display:flex;background:#F6F3FB;border-radius:18px;padding:14px;margin:16px 0;justify-content:space-around;border:1px solid #E2DBF0">
+                <div>
+                    <div style="font-size:11px;color:#6A5F7E;font-weight:700">EARNING</div>
+                    <div id="req-payout" style="font-size:22px;font-weight:800;color:#176B3A">₹50</div>
+                </div>
+                <div style="width:1px;background:#E2DBF0"></div>
+                <div>
+                    <div style="font-size:11px;color:#6A5F7E;font-weight:700">DISTANCE</div>
+                    <div id="req-distance" style="font-size:22px;font-weight:800;color:#1E1233">3.2 km</div>
+                </div>
+                <div style="width:1px;background:#E2DBF0"></div>
+                <div>
+                    <div style="font-size:11px;color:#6A5F7E;font-weight:700">ITEMS</div>
+                    <div id="req-items" style="font-size:22px;font-weight:800;color:#1E1233">2</div>
+                </div>
+            </div>
+
+            <div
+                style="text-align:left;font-size:12px;color:#4A4060;display:flex;flex-direction:column;gap:10px;margin-bottom:20px;background:#FAF8FD;padding:14px;border-radius:16px;border:1px solid #EAE4F5">
+                <div style="display:flex;gap:10px">
+                    <span style="font-size:16px">📍</span>
+                    <div><b style="color:#1E1233">Pickup:</b> <span id="req-rest-addr">Koramangala 4th Block</span>
+                    </div>
+                </div>
+                <div style="display:flex;gap:10px">
+                    <span style="font-size:16px">🏠</span>
+                    <div><b style="color:#1E1233">Drop:</b> <span id="req-drop-addr">Indiranagar 100ft Road</span></div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px">
+                <button onclick="respondToRequest('reject')"
+                    style="flex:1;padding:14px;border-radius:14px;background:#F6F3FB;color:#D8391F;border:1.5px solid #E2DBF0;font-weight:800;font-size:14px;cursor:pointer;transition:transform .15s,background .15s"
+                    onactive="this.style.transform='scale(0.95)'">
+                    DECLINE
+                </button>
+                <button onclick="respondToRequest('accept')"
+                    style="flex:1.4;padding:14px;border-radius:14px;background:linear-gradient(135deg,#00C853 0%,#009624 100%);color:#fff;border:none;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 6px 18px rgba(0,200,83,0.35);transition:transform .15s"
+                    onactive="this.style.transform='scale(0.95)'">
+                    ACCEPT ORDER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let partnerData = null;
+        let activeDelivery = null;
+        let pollTimer = null;
+        let reconnectTimer = null;
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2500);
+        }
+
+        function showOffline(show) {
+            const card = document.getElementById('offline-card');
+            card.style.display = show ? 'flex' : 'none';
+            if (show) {
+                const input = document.getElementById('server-url-input');
+                if (input && (!input.value || input.value.trim() === '')) {
+                    input.value = CONFIG.API_BASE;
+                }
+            }
+        }
+
+        function updateServerUrl() {
+            const input = document.getElementById('server-url-input');
+            if (!input) return;
+            let url = input.value.trim();
+            if (!url) return;
+            if (!url.endsWith('/api')) {
+                url = url.replace(/\/+$/, '') + '/api';
+            }
+            try {
+                localStorage.setItem('cravebites_rider_api_base', url);
+            } catch(e){}
+            CONFIG.API_BASE = url;
+            showToast('Saved URL: ' + url);
+            retryConnection();
+        }
+
+        // Unified API caller with JWT header
+        async function apiFetch(endpoint, options = {}) {
+            options.headers = options.headers || {};
+            const token = localStorage.getItem(CONFIG.TOKEN_KEY);
+            if (token) {
+                options.headers['Authorization'] = `Bearer ${token}`;
+            }
+            options.credentials = 'include';
+
+            try {
+                const url = endpoint.startsWith('http') ? endpoint : `${CONFIG.API_BASE}${endpoint}`;
+                const res = await fetch(url, options);
+                showOffline(false);
+                if (res.status === 401) {
+                    document.getElementById('auth-modal').style.display = 'flex';
+                    return { success: false, unauthorized: true };
+                }
+                return await res.json();
+            } catch (err) {
+                console.warn('API error:', err);
+                showOffline(true);
+                throw err;
+            }
+        }
+
+        // Authentication
+        async function checkAuth() {
+            try {
+                const data = await apiFetch('/auth/current_user');
+                if (data.success && data.user && (data.user.role === 'delivery' || data.user.role === 'delivery_partner')) {
+                    document.getElementById('auth-modal').style.display = 'none';
+                    fetchDeliveryData();
+                } else {
+                    document.getElementById('auth-modal').style.display = 'flex';
+                }
+            } catch (e) {
+                // Handled by apiFetch
+            }
+        }
+
+        async function loginAsDemoDelivery() {
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'delivery@dabba.com', password: 'password123' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.user && data.user.role !== 'delivery' && data.user.role !== 'delivery_partner') {
+                        const errBox = document.getElementById('auth-error');
+                        errBox.textContent = 'Access Denied: This app is for Delivery Partners only.';
+                        errBox.style.display = 'block';
+                        return;
+                    }
+                    if (data.token) localStorage.setItem(CONFIG.TOKEN_KEY, data.token);
+                    document.getElementById('auth-modal').style.display = 'none';
+                    showToast('Welcome Ravi!');
+                    fetchDeliveryData();
+                } else {
+                    const errBox = document.getElementById('auth-error');
+                    errBox.textContent = data.error || 'Login failed';
+                    errBox.style.display = 'block';
+                }
+            } catch (e) {
+                showOffline(true);
+            }
+        }
+
+        async function loginWithCredentials() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-pwd').value.trim();
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.user && data.user.role !== 'delivery' && data.user.role !== 'delivery_partner') {
+                        const errBox = document.getElementById('auth-error');
+                        errBox.textContent = 'Access Denied: This app is for Delivery Partners only.';
+                        errBox.style.display = 'block';
+                        return;
+                    }
+                    if (data.token) localStorage.setItem(CONFIG.TOKEN_KEY, data.token);
+                    document.getElementById('auth-modal').style.display = 'none';
+                    fetchDeliveryData();
+                } else {
+                    const errBox = document.getElementById('auth-error');
+                    errBox.textContent = data.error || 'Login failed';
+                    errBox.style.display = 'block';
+                }
+            } catch (e) {
+                showOffline(true);
+            }
+        }
+
+        async function logout() {
+            localStorage.removeItem(CONFIG.TOKEN_KEY);
+            try {
+                await fetch(`${CONFIG.API_BASE}/auth/logout`, { method: 'POST' });
+            } catch (e) { }
+            document.getElementById('auth-modal').style.display = 'flex';
+        }
+
+        async function retryConnection() {
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/health`);
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showOffline(false);
+                    checkAuth();
+                }
+            } catch (e) {
+                showToast('Server still unreachable. Check connection.');
+            }
+        }
+
+        let pendingRequest = null;
+
+        async function respondToRequest(action) {
+            if (!pendingRequest) return;
+            const orderId = pendingRequest.order_id;
+            try {
+                const data = await apiFetch(`/delivery/order/${orderId}/${action}`, { method: 'POST' });
+                if (data && data.success) {
+                    showToast(data.message);
+                    document.getElementById('request-modal').style.display = 'none';
+                    pendingRequest = null;
+                    fetchDeliveryData();
+                } else if (data && data.error) {
+                    alert(data.error);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Fetch dashboard telemetry
+        async function fetchDeliveryData() {
+            try {
+                const data = await apiFetch('/delivery/dashboard');
+                if (data && data.success) {
+                    partnerData = data.partner;
+                    activeDelivery = data.active_delivery;
+
+                    // Online status pill
+                    const isOnline = data.partner.is_online === 1;
+                    document.getElementById('online-dot').style.background = isOnline ? '#176B3A' : '#A79FBA';
+                    document.getElementById('online-text').textContent = isOnline ? "You're online" : "You're offline";
+
+                    // Earnings and Trips
+                    document.getElementById('earnings-pill').textContent = `₹${data.earnings_today.toLocaleString('en-IN')} today`;
+                    document.getElementById('trips-today-text').textContent = `${data.trips_today} trips today`;
+                    document.getElementById('hours-today-text').textContent = `${data.partner.hours_online} hrs online`;
+
+                    // Pending request modal handling
+                    if (data.pending_request) {
+                        pendingRequest = data.pending_request;
+                        document.getElementById('req-rest-name').textContent = pendingRequest.restaurant_name;
+                        document.getElementById('req-payout').textContent = `₹${pendingRequest.delivery_fee_earned.toFixed(0)}`;
+                        document.getElementById('req-distance').textContent = `${pendingRequest.distance_km || 3.2} km`;
+                        document.getElementById('req-items').textContent = pendingRequest.items_count || 1;
+                        document.getElementById('req-rest-addr').textContent = pendingRequest.restaurant_address || 'Restaurant address';
+                        document.getElementById('req-drop-addr').textContent = pendingRequest.drop_address || 'Customer address';
+                        document.getElementById('request-modal').style.display = 'flex';
+                    } else {
+                        pendingRequest = null;
+                        document.getElementById('request-modal').style.display = 'none';
+                    }
+
+                    // Active delivery rendering
+                    renderDeliveryTask(activeDelivery);
+                }
+            } catch (e) {
+                console.error('Failed to load delivery data', e);
+            }
+        }
+
+        // Render active delivery task
+        function renderDeliveryTask(delivery) {
+            const activeView = document.getElementById('active-task-view');
+            const waitingView = document.getElementById('waiting-task-view');
+            const banner = document.getElementById('task-status-banner');
+            const sliderTrack = document.getElementById('slider-track');
+            const sliderText = document.getElementById('slider-text');
+            const sliderBtn = document.getElementById('slider-btn');
+
+            if (!delivery) {
+                activeView.style.display = 'none';
+                waitingView.style.display = 'flex';
+                return;
+            }
+
+            activeView.style.display = 'flex';
+            waitingView.style.display = 'none';
+
+            document.getElementById('task-subline').textContent = `Order #${delivery.order_id}, ${delivery.items_count || 2} items`;
+            document.getElementById('task-payout').textContent = `₹${delivery.delivery_fee_earned.toFixed(0)}`;
+
+            document.getElementById('kpi-distance').textContent = `${delivery.distance_km || 3.2} km`;
+            document.getElementById('kpi-est-time').textContent = delivery.kpi_total_time || (delivery.delivery_status === 'picked_up' ? '8 min' : '20 min');
+            document.getElementById('kpi-to-pickup').textContent = delivery.kpi_pickup_time || (delivery.delivery_status === 'picked_up' ? 'Done' : '6 min');
+
+            document.getElementById('pickup-rest-name').textContent = delivery.restaurant_name;
+            document.getElementById('pickup-rest-addr').textContent = `Pickup, ${delivery.restaurant_address}`;
+
+            document.getElementById('drop-cust-name').textContent = `${delivery.customer_name} (${delivery.address_label || 'Home'})`;
+            document.getElementById('drop-cust-addr').textContent = `Drop, ${delivery.drop_address}`;
+
+            // Timeline dots, status banner and slider behavior based on order progress
+            if (delivery.delivery_status === 'picked_up') {
+                document.getElementById('task-headline').textContent = 'En Route to Drop';
+                document.getElementById('dot-pickup').style.background = '#176B3A';
+                document.getElementById('dot-pickup').style.borderColor = '#176B3A';
+                document.getElementById('dot-drop').style.background = '#FFC233';
+
+                sliderTrack.style.opacity = '1';
+                sliderTrack.style.pointerEvents = 'auto';
+                sliderText.textContent = 'Slide to confirm delivery';
+
+                if (banner) {
+                    banner.style.display = 'flex';
+                    banner.style.background = '#F6F3FB';
+                    banner.style.border = '1px solid #E2DBF0';
+                    banner.style.color = '#1E1233';
+                    banner.innerHTML = '<span style="font-size:22px">🛵</span><div style="flex:1"><b style="display:block">En Route to Customer</b><span>Deliver hot food to ' + (delivery.customer_name || 'Customer') + '</span></div>';
+                }
+            } else {
+                // Status is assigned (before pickup)
+                document.getElementById('dot-pickup').style.background = '#FFC233';
+                document.getElementById('dot-pickup').style.borderColor = '#1E1233';
+                document.getElementById('dot-drop').style.background = '#1E1233';
+
+                if (delivery.order_status === 'Ready') {
+                    document.getElementById('task-headline').textContent = 'Ready for Pickup';
+                    sliderTrack.style.opacity = '1';
+                    sliderTrack.style.pointerEvents = 'auto';
+                    sliderText.textContent = 'Slide to confirm pickup';
+
+                    if (banner) {
+                        banner.style.display = 'flex';
+                        banner.style.background = '#EBF9F1';
+                        banner.style.border = '1px solid #C4EDD6';
+                        banner.style.color = '#176B3A';
+                        banner.innerHTML = '<span style="font-size:22px">✅</span><div style="flex:1"><b style="display:block">Food is Ready for Pickup!</b><span>Collect order from counter and slide below to confirm.</span></div>';
+                    }
+                } else {
+                    // Still cooking! Order status is Placed / Accepted / Preparing
+                    document.getElementById('task-headline').textContent = 'Cooking in Progress';
+                    sliderTrack.style.opacity = '0.55';
+                    sliderTrack.style.pointerEvents = 'none';
+                    sliderText.textContent = 'Cooking in progress (Pickup locked)';
+
+                    if (banner) {
+                        banner.style.display = 'flex';
+                        banner.style.background = '#FFF9EB';
+                        banner.style.border = '1px solid #FFE7B3';
+                        banner.style.color = '#8A5800';
+                        banner.innerHTML = '<span style="font-size:22px">🍳</span><div style="flex:1"><b style="display:block">Restaurant is Cooking Food</b><span>Estimated prep: ~' + (delivery.remaining_prep_min || 12) + ' min. Waiting for kitchen to mark Ready.</span></div>';
+                    }
+                }
+            }
+
+            // Reset slider button position
+            sliderBtn.style.left = '6px';
+        }
+
+        // Toggle Online Status
+        async function toggleOnlineStatus() {
+            if (!partnerData) return;
+            const nextStatus = partnerData.is_online === 1 ? 0 : 1;
+            try {
+                const data = await apiFetch('/delivery/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_online: nextStatus })
+                });
+                if (data && data.success) {
+                    showToast(data.message);
+                    fetchDeliveryData();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function callEntity(target) {
+            if (!activeDelivery) return;
+            if (target === 'restaurant') {
+                alert(`Calling ${activeDelivery.restaurant_name}: ${activeDelivery.restaurant_phone || '080-41235678'}`);
+            } else {
+                alert(`Calling Customer ${activeDelivery.customer_name}: ${activeDelivery.customer_phone || '9876543210'}`);
+            }
+        }
+
+        // Slide-to-confirm action
+        async function simulateSlide() {
+            if (!activeDelivery) return;
+            const btn = document.getElementById('slider-btn');
+            const track = document.getElementById('slider-track');
+            const maxLeft = track.offsetWidth - btn.offsetWidth - 12;
+
+            if (activeDelivery.delivery_status === 'assigned' && activeDelivery.order_status !== 'Ready') {
+                alert("The restaurant is still cooking this order! Please wait until it is marked 'Ready'.");
+                btn.style.left = '6px';
+                btn.classList.add('nudge');
+                return;
+            }
+
+            btn.classList.remove('nudge');
+            btn.style.transition = 'left 0.3s ease';
+            btn.style.left = `${maxLeft}px`;
+
+            setTimeout(async () => {
+                if (activeDelivery.delivery_status === 'assigned') {
+                    try {
+                        const data = await apiFetch(`/delivery/order/${activeDelivery.order_id}/pickup`, { method: 'POST' });
+                        if (data && data.success) {
+                            showToast(data.message);
+                            fetchDeliveryData();
+                        } else if (data && data.error) {
+                            alert(data.error);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                } else if (activeDelivery.delivery_status === 'picked_up') {
+                    try {
+                        const data = await apiFetch(`/delivery/order/${activeDelivery.order_id}/drop`, { method: 'POST' });
+                        if (data && data.success) {
+                            showToast(data.message);
+                            fetchDeliveryData();
+                        } else if (data && data.error) {
+                            alert(data.error);
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+                btn.style.left = '6px';
+                btn.classList.add('nudge');
+            }, 350);
+        }
+
+        // Draggable touch and mouse slider
+        (function initDraggableSlider() {
+            const btn = document.getElementById('slider-btn');
+            const track = document.getElementById('slider-track');
+            let isDragging = false;
+            let startX = 0;
+
+            function onStart(e) {
+                if (!activeDelivery) return;
+                isDragging = true;
+                startX = (e.touches ? e.touches[0].clientX : e.clientX) - btn.offsetLeft;
+                btn.classList.remove('nudge');
+                btn.style.transition = 'none';
+            }
+
+            function onMove(e) {
+                if (!isDragging) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const maxLeft = track.offsetWidth - btn.offsetWidth - 12;
+                let newLeft = clientX - startX;
+                if (newLeft < 6) newLeft = 6;
+                if (newLeft > maxLeft) newLeft = maxLeft;
+                btn.style.left = `${newLeft}px`;
+
+                if (newLeft >= maxLeft * 0.85) {
+                    isDragging = false;
+                    simulateSlide();
+                }
+            }
+
+            function onEnd() {
+                if (!isDragging) return;
+                isDragging = false;
+                btn.style.transition = 'left 0.2s';
+                btn.style.left = '6px';
+                btn.classList.add('nudge');
+            }
+
+            btn.addEventListener('mousedown', onStart);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+
+            btn.addEventListener('touchstart', onStart, { passive: true });
+            window.addEventListener('touchmove', onMove, { passive: true });
+            window.addEventListener('touchend', onEnd);
+        })();
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => { });
+            });
+        }
+
+        // Android Hardware Back Button Handling
+        function handleAndroidBackButton() {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.exitApp();
+            }
+        }
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+            window.Capacitor.Plugins.App.addListener('backButton', handleAndroidBackButton);
+        }
+        document.addEventListener('backbutton', handleAndroidBackButton);
+
+        // Start polling every 5s & auto-reconnect every 3s
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+                window.Capacitor.Plugins.StatusBar.setBackgroundColor({ color: '#1E1233' }).catch(() => { });
+            }
+            checkAuth();
+            pollTimer = setInterval(() => {
+                if (document.getElementById('auth-modal').style.display !== 'flex') {
+                    fetchDeliveryData();
+                }
+            }, 3000);
+
+            reconnectTimer = setInterval(async () => {
+                const off = document.getElementById('offline-card');
+                if (off.style.display === 'flex') {
+                    try {
+                        const res = await fetch(`${CONFIG.API_BASE}/health`);
+                        const data = await res.json();
+                        if (data.status === 'ok') {
+                            showOffline(false);
+                            checkAuth();
+                        }
+                    } catch (err) { }
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>

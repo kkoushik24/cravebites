@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CraveBites - Restaurant Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script>
+        window.CONFIG = window.CONFIG || {};
+        (function() {
+            var defaultApi = 'http://127.0.0.1:5000/api';
+            try {
+                if (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')) {
+                    if (window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost') {
+                        defaultApi = window.location.origin + '/api';
+                    }
+                }
+            } catch(e){}
+            window.CONFIG.API_BASE = defaultApi;
+            window.CONFIG.TOKEN_KEY = 'dabba_restaurant_token';
+        })();
+    </script>
+    <script src="/config.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background: #F6F3FB;
+            font-family: 'DM Sans', sans-serif;
+            color: #1E1233
+        }
+
+        .app {
+            font-family: 'DM Sans', sans-serif;
+            color: #1E1233;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 232px 1fr;
+            background: #F6F3FB
+        }
+
+        .h {
+            font-family: 'Bricolage Grotesque', sans-serif
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer
+        }
+
+        .sn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 46px;
+            padding: 0 14px;
+            border: 0;
+            border-radius: 14px;
+            background: none;
+            color: #CFC6E3;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+            width: 100%;
+            transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), background .2s, color .2s
+        }
+
+        .sn.on {
+            background: linear-gradient(135deg, #D8391F 0%, #B82A13 100%);
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(216, 57, 31, 0.35)
+        }
+
+        .sn:hover {
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            transform: translateX(3px)
+        }
+
+        .sn.on:hover {
+            background: linear-gradient(135deg, #D8391F 0%, #B82A13 100%);
+            transform: none
+        }
+
+        .badge {
+            background: #FFC233;
+            color: #1E1233;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 2px 9px;
+            animation: pop 2.4s infinite;
+            box-shadow: 0 2px 6px rgba(255, 194, 51, 0.4)
+        }
+
+        @keyframes pop {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.12)
+            }
+        }
+
+        .stat {
+            background: #ffffff;
+            border: 1px solid rgba(226, 219, 240, 0.85);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 16px -4px rgba(30, 18, 51, 0.06), 0 1px 3px rgba(30, 18, 51, 0.03);
+            animation: slidein .7s backwards;
+            transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), box-shadow .3s ease, border-color .3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden
+        }
+
+        .stat:hover {
+            transform: translateY(-6px) scale(1.018);
+            box-shadow: 0 16px 36px -8px rgba(30, 18, 51, 0.14), 0 4px 12px rgba(30, 18, 51, 0.04);
+            border-color: #CBBFE6
+        }
+
+        .stat::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #D8391F, #FFC233);
+            opacity: 0;
+            transition: opacity .3s ease
+        }
+
+        .stat:hover::before {
+            opacity: 1
+        }
+
+        .stat:nth-child(2) {
+            animation-delay: .1s
+        }
+
+        .stat:nth-child(3) {
+            animation-delay: .2s
+        }
+
+        .stat:nth-child(4) {
+            animation-delay: .3s
+        }
+
+        .lbl {
+            font-size: 13px;
+            color: #6A5F7E;
+            font-weight: 500
+        }
+
+        .col {
+            background: linear-gradient(180deg, #F2EDFA 0%, #ECE5F7 100%);
+            border: 1px solid #E2DBF0;
+            border-radius: 22px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            perspective: 1000px;
+            min-height: 280px;
+            box-shadow: 0 2px 10px rgba(30, 18, 51, 0.04)
+        }
+
+        .ch {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 6px;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: -.01em
+        }
+
+        .oc {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 16px;
+            border: 1px solid rgba(226, 219, 240, 0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 16px -4px rgba(30, 18, 51, 0.07), 0 1px 3px rgba(30, 18, 51, 0.03);
+            transition: transform .32s cubic-bezier(.34, 1.56, .64, 1), box-shadow .32s ease, border-color .32s ease;
+            transform-style: preserve-3d;
+            position: relative
+        }
+
+        .oc:hover {
+            transform: rotateX(4deg) rotateY(-3deg) translateY(-6px);
+            box-shadow: 0 22px 40px -8px rgba(30, 18, 51, 0.18), 0 4px 14px rgba(30, 18, 51, 0.05);
+            border-color: #CBBFE6
+        }
+
+        .oc.new {
+            animation: slidein .8s cubic-bezier(.2, .8, .2, 1) backwards, ring 2.4s 1s infinite
+        }
+
+        .oc.new+.oc.new {
+            animation-delay: .3s, 1.3s
+        }
+
+        @keyframes slidein {
+            from {
+                opacity: 0;
+                transform: translateX(-44px) rotateY(28deg)
+            }
+        }
+
+        @keyframes ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 159, 28, .75)
+            }
+
+            70%,
+            100% {
+                box-shadow: 0 0 0 14px rgba(255, 159, 28, 0)
+            }
+        }
+
+        .b {
+            height: 44px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 0 18px;
+            border: 1px solid #D5CCE6;
+            background: #fff;
+            color: #1E1233;
+            transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), background .18s, box-shadow .18s;
+            box-shadow: 0 2px 6px rgba(30, 18, 51, 0.05)
+        }
+
+        .b:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 18, 51, 0.12)
+        }
+
+        .b:active {
+            transform: scale(.95)
+        }
+
+        .b.p {
+            background: linear-gradient(135deg, #D8391F 0%, #BA2F17 100%);
+            border-color: #D8391F;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(216, 57, 31, 0.25)
+        }
+
+        .b.p:hover {
+            background: linear-gradient(135deg, #e64327 0%, #c7351d 100%);
+            box-shadow: 0 8px 22px rgba(216, 57, 31, 0.36)
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #E2DBF0;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 16px -4px rgba(30, 18, 51, 0.06)
+        }
+
+        .sw {
+            width: 52px;
+            height: 44px;
+            border: 0;
+            background: none;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer
+        }
+
+        .sw i {
+            display: block;
+            width: 44px;
+            height: 26px;
+            border-radius: 13px;
+            background: #176B3A;
+            position: relative;
+            transition: all .25s;
+            box-shadow: 0 2px 6px rgba(23, 107, 58, 0.3)
+        }
+
+        .sw i::after {
+            content: "";
+            position: absolute;
+            right: 3px;
+            top: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #fff;
+            transition: all .25s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2)
+        }
+
+        .sw.off i {
+            background: #A79FBA;
+            box-shadow: none
+        }
+
+        .sw.off i::after {
+            right: auto;
+            left: 3px
+        }
+
+        .live {
+            animation: blink 1.4s infinite
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: .3
+            }
+        }
+
+        div[role="img"]>div {
+            transform-origin: bottom;
+            animation: grow 1s cubic-bezier(.2, .8, .2, 1) backwards;
+            transition: height .4s ease;
+            border-radius: 6px 6px 0 0
+        }
+
+        @keyframes grow {
+            from {
+                transform: scaleY(0)
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            * {
+                animation: none !important;
+                transition: none !important
+            }
+        }
+
+        /* Modals & Overlays */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(30, 18, 51, 0.65);
+            backdrop-filter: blur(6px);
+            z-index: 900;
+            display: none;
+            align-items: center;
+            justify-content: center
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 26px;
+            padding: 28px;
+            width: 100%;
+            max-width: 560px;
+            box-sizing: border-box;
+            box-shadow: 0 28px 60px rgba(30, 18, 51, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalPop .3s cubic-bezier(.34, 1.56, .64, 1)
+        }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(.92) translateY(12px)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0)
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1E1233;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            z-index: 999;
+            box-shadow: 0 10px 24px rgba(30, 18, 51, 0.3);
+            display: none
+        }
+
+        /* Offline Banner / Disconnected Overlay */
+        .offline-card {
+            position: fixed;
+            inset: 0;
+            background: #F6F3FB;
+            z-index: 950;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            text-align: center;
+            gap: 16px
+        }
+
+        .offline-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #FFEBE8;
+            color: #D8391F;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px
+        }
+
+        .retry-btn {
+            background: #D8391F;
+            color: #fff;
+            border: 0;
+            border-radius: 14px;
+            padding: 0 24px;
+            height: 48px;
+            font-weight: 700;
+            font-size: 15px
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- OFFLINE / DISCONNECTED SCREEN -->
+    <div id="offline-card" class="offline-card">
+        <div class="offline-icon">🔌</div>
+        <div class="h" style="font-size:26px;font-weight:800">Cannot reach the server</div>
+        <div style="font-size:15px;color:#6A5F7E;max-width:440px;line-height:1.5">
+            Connection to backend server lost. Please ensure the backend server on <b>http://127.0.0.1:5000</b> is
+            running.
+        </div>
+        <button class="retry-btn" onclick="retryConnection()">Retry Connection</button>
+        <div style="font-size:13px;color:#9E94B5;margin-top:8px">Auto-reconnecting every 3s...</div>
+    </div>
+
+    <!-- AUTH MODAL (if not signed in) -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-box" style="max-width:420px;padding:32px 28px;text-align:center">
+            <div class="h" style="font-size:28px;font-weight:800;margin-bottom:4px">CraveBites <span
+                    style="color:#D8391F">Restaurant</span></div>
+            <div style="font-size:14px;color:#6A5F7E;margin-bottom:20px">Sign in to manage your kitchen orders &amp;
+                menu</div>
+
+            <div id="auth-error"
+                style="color:#D8391F;background:#FFEBE8;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:14px;display:none">
+            </div>
+
+            <button onclick="loginAsDemoRestaurant()"
+                style="height:48px;width:100%;border-radius:12px;border:0;background:#D8391F;color:#fff;font-weight:700;font-size:15px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px">
+                <span>⚡ 1-Click Demo Login (Ember &amp; Rice)</span>
+            </button>
+
+            <div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#6A5F7E;margin:12px 0">
+                <span style="flex:1;height:1px;background:#D5CCE6"></span>or email sign in<span
+                    style="flex:1;height:1px;background:#D5CCE6"></span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px;text-align:left">
+                <input id="login-email" type="email" value="restaurant@dabba.com" placeholder="Email"
+                    style="height:44px;border-radius:12px;border:1px solid #D5CCE6;padding:0 14px;font-size:14px">
+                <input id="login-pwd" type="password" value="password123" placeholder="Password"
+                    style="height:44px;border-radius:12px;border:1px solid #D5CCE6;padding:0 14px;font-size:14px">
+                <button onclick="loginWithCredentials()" class="b p" style="margin-top:6px;width:100%">Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        <!-- Sidebar -->
+        <div
+            style="background:linear-gradient(180deg,#180D2B 0%,#110820 100%);border-right:1px solid rgba(255,255,255,0.06);box-shadow:4px 0 20px rgba(0,0,0,0.15);color:#fff;padding:26px 16px;display:flex;flex-direction:column;gap:6px">
+            <div class="h" style="font-size:26px;font-weight:800;padding:0 12px">CraveBites <span
+                    style="color:#FFC233">Restaurant</span></div>
+            <div id="rest-sidebar-meta" style="font-size:13px;color:#CFC6E3;padding:0 12px 18px">Ember &amp; Rice, 4th
+                Block</div>
+
+            <button class="sn on" id="menu-tab-live" onclick="switchSection('live')">
+                <span>Live orders</span>
+                <span class="badge" id="badge-live-total">0</span>
+            </button>
+            <button class="sn" id="menu-tab-menu" onclick="openMenuModal()"><span>Menu Management</span></button>
+            <button class="sn" id="menu-tab-report" onclick="openReportModal()"><span>Monthly Report</span></button>
+            <button class="sn" onclick="fetchDashboard()"><span>Refresh Telemetry</span></button>
+
+            <div style="flex:1"></div>
+
+            <button onclick="logout()"
+                style="color:#FFD6D6;background:none;border:0;font-size:13px;padding:8px 12px;font-weight:700;text-align:left;cursor:pointer">Sign
+                Out</button>
+
+            <div
+                style="background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:700">
+                <span>Accepting orders</span>
+                <button class="sw" id="accepting-switch" role="switch" aria-checked="true" aria-label="Accepting orders"
+                    onclick="toggleKitchenAccepting()">
+                    <i></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div style="padding:28px 32px;display:flex;flex-direction:column;gap:20px;overflow-y:auto">
+            <!-- Top bar -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+                <div>
+                    <h1 class="h" style="margin:0;font-size:36px;font-weight:800;letter-spacing:-.02em">
+                        <span class="live"
+                            style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#D8391F;margin-right:12px;vertical-align:middle"></span>Live
+                        orders
+                    </h1>
+                    <div id="current-date-str" style="font-size:14px;color:#6A5F7E;margin-top:4px">Sunday, 22 November
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <span id="kitchen-status-pill"
+                        style="background:#FFEDBF;color:#7A4300;border-radius:999px;padding:10px 16px;font-size:14px;font-weight:700">Kitchen
+                        is busy, prep time 18 min</span>
+                    <button class="b" id="pause-orders-btn" onclick="toggleKitchenAccepting()">Pause orders</button>
+                </div>
+            </div>
+
+            <!-- KPI Stats Cards -->
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+                <div class="stat">
+                    <div class="lbl">Orders today</div>
+                    <div class="h" id="stat-orders-today" style="font-size:34px;font-weight:800">0</div>
+                    <div style="font-size:13px;color:#176B3A;font-weight:700">Live updated</div>
+                </div>
+                <div class="stat">
+                    <div class="lbl">Revenue today</div>
+                    <div class="h" id="stat-revenue-today" style="font-size:34px;font-weight:800">₹0</div>
+                    <div style="font-size:13px;color:#176B3A;font-weight:700" id="stat-avg-ticket">₹0 average order
+                    </div>
+                </div>
+                <div class="stat">
+                    <div class="lbl">Average prep time</div>
+                    <div class="h" id="stat-prep-time" style="font-size:34px;font-weight:800">18 min</div>
+                    <div style="font-size:13px;color:#6A5F7E">Target is 15 min</div>
+                </div>
+                <div class="stat">
+                    <div class="lbl">Rating today</div>
+                    <div class="h" id="stat-rating-today" style="font-size:34px;font-weight:800">4.8</div>
+                    <div style="font-size:13px;color:#6A5F7E" id="stat-reviews-count">From verified orders</div>
+                </div>
+            </div>
+
+            <!-- 3-Column Kanban Board -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+                <!-- Column 1: New Orders -->
+                <div class="col">
+                    <div class="ch"><span>New</span><span class="badge" id="badge-col-new">0</span></div>
+                    <div id="col-new-container" style="display:flex;flex-direction:column;gap:10px"></div>
+                </div>
+
+                <!-- Column 2: Preparing -->
+                <div class="col">
+                    <div class="ch"><span>Preparing</span><span class="badge" style="background:#fff"
+                            id="badge-col-prep">0</span></div>
+                    <div id="col-prep-container" style="display:flex;flex-direction:column;gap:10px"></div>
+                </div>
+
+                <!-- Column 3: Ready for Pickup -->
+                <div class="col">
+                    <div class="ch"><span>Ready for pickup</span><span class="badge" style="background:#fff"
+                            id="badge-col-ready">0</span></div>
+                    <div id="col-ready-container" style="display:flex;flex-direction:column;gap:10px"></div>
+                </div>
+            </div>
+
+            <!-- Lower Panels: Orders By Hour & Running Low -->
+            <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
+                <!-- Chart Panel -->
+                <div class="panel">
+                    <div style="font-weight:700;font-size:16px">Orders by hour</div>
+                    <div id="hourly-chart-container" role="img" aria-label="Bar chart of orders per hour"
+                        style="display:flex;align-items:flex-end;gap:14px;height:110px;margin-top:14px"></div>
+                    <div id="hourly-labels-container"
+                        style="display:flex;gap:14px;font-size:12px;color:#6A5F7E;margin-top:6px"></div>
+                </div>
+
+                <!-- Running Low Panel -->
+                <div class="panel">
+                    <div style="font-weight:700;font-size:16px;margin-bottom:12px">Running low &amp; Stock Switches
+                    </div>
+                    <div id="running-low-container" style="display:flex;flex-direction:column;gap:10px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU MANAGEMENT MODAL -->
+    <div id="menu-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <h2 class="h" style="margin:0;font-size:24px">Menu Management</h2>
+                <button onclick="closeMenuModal()"
+                    style="background:none;border:0;font-size:22px;font-weight:700">✕</button>
+            </div>
+
+            <div style="background:#F6F3FB;padding:16px;border-radius:16px;margin-bottom:16px">
+                <div style="font-weight:700;font-size:15px;margin-bottom:8px">+ Add New Dish</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <input id="dish-name" placeholder="Dish Name (e.g. Paneer Biryani)"
+                        style="height:38px;border-radius:10px;border:1px solid #D5CCE6;padding:0 10px">
+                    <input id="dish-price" type="number" placeholder="Price (₹)"
+                        style="height:38px;border-radius:10px;border:1px solid #D5CCE6;padding:0 10px">
+                    <select id="dish-category"
+                        style="height:38px;border-radius:10px;border:1px solid #D5CCE6;padding:0 10px">
+                        <option value="1">Biryani</option>
+                        <option value="2">Dosa</option>
+                        <option value="3">Thali</option>
+                        <option value="4">Kebabs &amp; Starters</option>
+                        <option value="5">Curries &amp; Breads</option>
+                        <option value="6">Desserts</option>
+                        <option value="7">Beverages</option>
+                    </select>
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <label><input type="radio" name="dish_veg" value="1" checked> Veg</label>
+                        <label><input type="radio" name="dish_veg" value="0"> Non-Veg</label>
+                    </div>
+                </div>
+                <button onclick="addNewDish()"
+                    style="margin-top:10px;height:40px;width:100%;border-radius:10px;border:0;background:#1E1233;color:#fff;font-weight:700">Add
+                    to Menu</button>
+            </div>
+
+            <div style="font-weight:700;font-size:15px;margin-bottom:8px">Current Dishes</div>
+            <div id="full-menu-list" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+    </div>
+
+    <!-- MONTHLY REPORT MODAL -->
+    <div id="report-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <h2 class="h" style="margin:0;font-size:24px">Monthly Sales Report</h2>
+                <button onclick="closeReportModal()"
+                    style="background:none;border:0;font-size:22px;font-weight:700">✕</button>
+            </div>
+            <div id="report-content" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+    </div>
+
+    <script>
+        let restaurantInfo = null;
+        let pollTimer = null;
+        let reconnectTimer = null;
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2500);
+        }
+
+        function showOffline(show) {
+            document.getElementById('offline-card').style.display = show ? 'flex' : 'none';
+        }
+
+        function setDateHeader() {
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('current-date-str').textContent = new Date().toLocaleDateString('en-US', options);
+        }
+
+        // Unified API caller with JWT header
+        async function apiFetch(endpoint, options = {}) {
+            options.headers = options.headers || {};
+            const token = localStorage.getItem(CONFIG.TOKEN_KEY);
+            if (token) {
+                options.headers['Authorization'] = `Bearer ${token}`;
+            }
+            options.credentials = 'include';
+
+            try {
+                const url = endpoint.startsWith('http') ? endpoint : `${CONFIG.API_BASE}${endpoint}`;
+                const res = await fetch(url, options);
+                showOffline(false);
+                if (res.status === 401) {
+                    document.getElementById('auth-modal').style.display = 'flex';
+                    return { success: false, unauthorized: true };
+                }
+                return await res.json();
+            } catch (err) {
+                console.warn('API error:', err);
+                showOffline(true);
+                throw err;
+            }
+        }
+
+        // Authentication
+        async function checkAuth() {
+            try {
+                const data = await apiFetch('/auth/current_user');
+                if (data.success && data.user && data.user.role === 'restaurant') {
+                    document.getElementById('auth-modal').style.display = 'none';
+                    fetchDashboard();
+                } else {
+                    document.getElementById('auth-modal').style.display = 'flex';
+                }
+            } catch (e) {
+                // Will show offline screen if backend is unreachable
+            }
+        }
+
+        async function loginAsDemoRestaurant() {
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'restaurant@dabba.com', password: 'password123' })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.token) localStorage.setItem(CONFIG.TOKEN_KEY, data.token);
+                    document.getElementById('auth-modal').style.display = 'none';
+                    showToast('Welcome back, Ember & Rice!');
+                    fetchDashboard();
+                } else {
+                    const errBox = document.getElementById('auth-error');
+                    errBox.textContent = data.error || 'Login failed';
+                    errBox.style.display = 'block';
+                }
+            } catch (e) {
+                showOffline(true);
+            }
+        }
+
+        async function loginWithCredentials() {
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-pwd').value.trim();
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.token) localStorage.setItem(CONFIG.TOKEN_KEY, data.token);
+                    document.getElementById('auth-modal').style.display = 'none';
+                    fetchDashboard();
+                } else {
+                    const errBox = document.getElementById('auth-error');
+                    errBox.textContent = data.error || 'Login failed';
+                    errBox.style.display = 'block';
+                }
+            } catch (e) {
+                showOffline(true);
+            }
+        }
+
+        async function logout() {
+            localStorage.removeItem(CONFIG.TOKEN_KEY);
+            try {
+                await fetch(`${CONFIG.API_BASE}/auth/logout`, { method: 'POST' });
+            } catch (e) { }
+            document.getElementById('auth-modal').style.display = 'flex';
+        }
+
+        async function retryConnection() {
+            try {
+                const res = await fetch(`${CONFIG.API_BASE}/health`);
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    showOffline(false);
+                    checkAuth();
+                }
+            } catch (e) {
+                showToast('Server still unreachable. Check connection.');
+            }
+        }
+
+        // Fetch and render full dashboard
+        async function fetchDashboard() {
+            try {
+                const data = await apiFetch('/restaurant/dashboard');
+                if (data && data.success) {
+                    restaurantInfo = data.restaurant;
+
+                    // Update Header & Sidebar
+                    document.getElementById('rest-sidebar-meta').textContent = `${data.restaurant.name}, ${data.restaurant.address.split(',')[1] || 'Bengaluru'}`;
+                    const isAccepting = data.restaurant.is_accepting_orders === 1;
+                    const sw = document.getElementById('accepting-switch');
+                    if (isAccepting) {
+                        sw.classList.remove('off');
+                        sw.setAttribute('aria-checked', 'true');
+                        document.getElementById('kitchen-status-pill').textContent = `Kitchen is active, prep time ${data.restaurant.prep_time_min} min`;
+                        document.getElementById('kitchen-status-pill').style.background = '#FFEDBF';
+                        document.getElementById('kitchen-status-pill').style.color = '#7A4300';
+                        document.getElementById('pause-orders-btn').textContent = 'Pause orders';
+                    } else {
+                        sw.classList.add('off');
+                        sw.setAttribute('aria-checked', 'false');
+                        document.getElementById('kitchen-status-pill').textContent = 'Kitchen paused: Not accepting orders';
+                        document.getElementById('kitchen-status-pill').style.background = '#FFEBE8';
+                        document.getElementById('kitchen-status-pill').style.color = '#D8391F';
+                        document.getElementById('pause-orders-btn').textContent = 'Resume orders';
+                    }
+
+                    // Update Stats
+                    document.getElementById('stat-orders-today').textContent = data.stats.orders_today;
+                    document.getElementById('stat-revenue-today').textContent = `₹${data.stats.revenue_today.toLocaleString('en-IN')}`;
+                    document.getElementById('stat-avg-ticket').textContent = `₹${data.stats.avg_order_value.toFixed(0)} average order`;
+                    document.getElementById('stat-prep-time').textContent = `${data.stats.prep_time_min} min`;
+                    document.getElementById('stat-rating-today').textContent = data.stats.rating_today.toFixed(1);
+                    document.getElementById('stat-reviews-count').textContent = `From ${data.stats.reviews_count || 37} reviews`;
+
+                    // Render Kanban Columns
+                    renderKanban(data.columns);
+
+                    // Render Orders by Hour Chart
+                    renderHourlyChart(data.chart_bars);
+
+                    // Render Running Low items
+                    renderRunningLow(data.running_low);
+                }
+            } catch (e) {
+                console.error('Failed to load dashboard', e);
+            }
+        }
+
+        // Render Kanban
+        function renderKanban(cols) {
+            const newCol = document.getElementById('col-new-container');
+            const prepCol = document.getElementById('col-prep-container');
+            const readyCol = document.getElementById('col-ready-container');
+
+            const newOrders = cols.new || [];
+            const prepOrders = cols.preparing || [];
+            const readyOrders = cols.ready || [];
+
+            document.getElementById('badge-col-new').textContent = newOrders.length;
+            document.getElementById('badge-col-prep').textContent = prepOrders.length;
+            document.getElementById('badge-col-ready').textContent = readyOrders.length;
+            document.getElementById('badge-live-total').textContent = newOrders.length + prepOrders.length + readyOrders.length;
+
+            // 1. New Orders Column
+            if (newOrders.length === 0) {
+                newCol.innerHTML = '<div style="font-size:13px;color:#6A5F7E;text-align:center;padding:20px">No new orders waiting</div>';
+            } else {
+                newCol.innerHTML = newOrders.map(o => `
+            <div class="oc new">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E">
+                    <b style="color:#1E1233">#${o.order_id}</b>
+                    <span>${o.minutes_ago > 0 ? o.minutes_ago + ' min ago' : 'just now'}</span>
+                </div>
+                <div style="font-size:15px;font-weight:600">${o.items_summary || 'Order Items'}</div>
+                <div style="font-weight:700">₹${o.total_amount.toFixed(0)}, ${o.payment_method === 'cod' ? 'cash on delivery' : 'paid online'}</div>
+                <div style="display:flex;gap:8px">
+                    <button class="b" style="flex:1" onclick="orderAction(${o.order_id}, 'reject')">Reject</button>
+                    <button class="b p" style="flex:1" onclick="orderAction(${o.order_id}, 'accept')">Accept</button>
+                </div>
+            </div>
+        `).join('');
+            }
+
+            // 2. Preparing Column
+            if (prepOrders.length === 0) {
+                prepCol.innerHTML = '<div style="font-size:13px;color:#6A5F7E;text-align:center;padding:20px">No orders in preparation</div>';
+            } else {
+                prepCol.innerHTML = prepOrders.map(o => {
+                    const hasRider = Boolean(o.delivery_partner_id && o.partner_name);
+                    let riderBadge = '';
+                    if (hasRider) {
+                        riderBadge = `
+                    <div style="background:#EBF9F1;border:1px solid #C4EDD6;border-radius:10px;padding:8px 10px;font-size:12px;color:#176B3A;display:flex;align-items:center;gap:8px">
+                        <span style="font-size:18px">🛵</span>
+                        <div style="flex:1">
+                            <b style="color:#0C4E26">${o.partner_name}</b> · ${o.vehicle_type || 'Vehicle'} (${o.vehicle_number || ''})
+                            <div style="font-size:11px;color:#2D7D4E">Ph: ${o.partner_phone || ''} · Assigned &amp; Accepted</div>
+                        </div>
+                    </div>
+                `;
+                    } else {
+                        riderBadge = `
+                    <div style="background:#FFF9EB;border:1px solid #FFE7B3;border-radius:10px;padding:8px 10px;font-size:12px;color:#8A5800;display:flex;align-items:center;justify-content:space-between">
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span style="font-size:18px">⏳</span>
+                            <div>
+                                <b>Broadcasted to Delivery Partners</b>
+                                <div style="font-size:11px">Waiting for a rider to accept${o.rejections_count > 0 ? ` (${o.rejections_count} declined)` : ''}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    }
+
+                    return `
+                <div class="oc">
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E">
+                        <b style="color:#1E1233">#${o.order_id}</b>
+                        <span style="background:#FFEDBF;color:#7A4300;border-radius:8px;padding:2px 8px;font-weight:700">Cooking</span>
+                    </div>
+                    <div style="font-size:15px;font-weight:600">${o.items_summary}</div>
+                    <div style="font-weight:700">₹${o.total_amount.toFixed(0)}, ${o.payment_method === 'cod' ? 'COD' : 'Paid'}</div>
+                    ${riderBadge}
+                    <button class="b p" onclick="orderAction(${o.order_id}, 'mark_ready')">Mark Ready (Cooking Complete)</button>
+                </div>
+            `;
+                }).join('');
+            }
+
+            // 3. Ready Column
+            if (readyOrders.length === 0) {
+                readyCol.innerHTML = '<div style="font-size:13px;color:#6A5F7E;text-align:center;padding:20px">No orders waiting for pickup</div>';
+            } else {
+                readyCol.innerHTML = readyOrders.map(o => {
+                    const hasRider = Boolean(o.delivery_partner_id && o.partner_name);
+                    const partnerName = o.partner_name || 'Rider';
+                    const letter = (partnerName[0] || 'R').toUpperCase();
+                    return `
+                <div class="oc">
+                    <div style="display:flex;justify-content:space-between;font-size:13px;color:#6A5F7E">
+                        <b style="color:#1E1233">#${o.order_id}</b>
+                        <span style="background:#EBF9F1;color:#176B3A;border-radius:8px;padding:2px 8px;font-weight:700">Ready in dispatch</span>
+                    </div>
+                    <div style="font-size:15px;font-weight:600">${o.items_summary}</div>
+                    <div style="font-weight:700">₹${o.total_amount.toFixed(0)}, ${o.payment_method === 'cod' ? 'COD' : 'Paid'}</div>
+
+                    ${hasRider ? `
+                        <div style="display:flex;align-items:center;gap:10px;font-size:13px;background:#F6F3FB;padding:8px 10px;border-radius:10px">
+                            <span style="width:32px;height:32px;border-radius:50%;background:#FFC233;font-weight:800;display:flex;align-items:center;justify-content:center">${letter}</span>
+                            <div style="flex:1">
+                                <div style="font-weight:700">${o.partner_name} (${o.partner_phone || ''})</div>
+                                <div style="font-size:11px;color:#6A5F7E">${o.vehicle_type || 'Vehicle'} · Waiting for pickup</div>
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="background:#FFF9EB;border:1px solid #FFE7B3;border-radius:10px;padding:8px 10px;font-size:12px;color:#8A5800;display:flex;align-items:center;gap:8px">
+                            <span style="font-size:18px">⏳</span>
+                            <div>
+                                <b>Broadcasted to Delivery Partners</b>
+                                <div style="font-size:11px">Waiting for a rider to accept${o.rejections_count > 0 ? ` (${o.rejections_count} declined)` : ''}</div>
+                            </div>
+                        </div>
+                    `}
+
+                    <button class="b" onclick="orderAction(${o.order_id}, 'hand_over')">Hand over to rider</button>
+                </div>
+            `;
+                }).join('');
+            }
+        }
+
+        // Order Actions
+        async function orderAction(orderId, action) {
+            try {
+                const data = await apiFetch(`/restaurant/order/${orderId}/action`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+                if (data && data.success) {
+                    showToast(data.message);
+                    fetchDashboard();
+                } else if (data && data.error) {
+                    alert(data.error);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Toggle Kitchen Status
+        async function toggleKitchenAccepting() {
+            if (!restaurantInfo) return;
+            const current = restaurantInfo.is_accepting_orders === 1;
+            try {
+                const data = await apiFetch('/restaurant/status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ is_accepting_orders: current ? 0 : 1 })
+                });
+                if (data && data.success) {
+                    showToast(data.message);
+                    fetchDashboard();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Render Orders by Hour Chart
+        function renderHourlyChart(bars) {
+            const chartContainer = document.getElementById('hourly-chart-container');
+            const labelsContainer = document.getElementById('hourly-labels-container');
+
+            if (!bars || bars.length === 0) return;
+
+            chartContainer.innerHTML = bars.map(b => `
+        <div style="flex:1;height:${b.height_px}px;background:${b.is_peak ? '#D8391F' : '#CBBFE6'};border-radius:6px;transition:height .3s" title="${b.count} orders at ${b.hour_label}"></div>
+    `).join('');
+
+            labelsContainer.innerHTML = bars.map(b => `
+        <span style="flex:1;text-align:center">${b.hour_label.split(' ')[0]}</span>
+    `).join('');
+        }
+
+        // Render Running Low panel
+        function renderRunningLow(items) {
+            const container = document.getElementById('running-low-container');
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div style="font-size:13px;color:#6A5F7E">All menu items have healthy stock levels.</div>';
+                return;
+            }
+
+            container.innerHTML = items.map(it => {
+                const isAvail = it.is_available === 1 && it.stock_quantity > 0;
+                const stockStr = isAvail ? `${it.stock_quantity} left` : 'sold out';
+                return `
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:15px">
+                <span>${it.name}, ${stockStr}</span>
+                <button class="sw ${isAvail ? '' : 'off'}" role="switch" aria-checked="${isAvail}" onclick="toggleDishStock(${it.item_id})">
+                    <i></i>
+                </button>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Toggle dish stock on/off
+        async function toggleDishStock(itemId) {
+            try {
+                const data = await apiFetch(`/restaurant/menu/${itemId}/toggle-stock`, { method: 'POST' });
+                if (data && data.success) {
+                    showToast(data.message);
+                    fetchDashboard();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        const DISH_IMAGES = {
+            // Ember & Rice
+            'Dum Biryani': 'images/biryani.jpg',
+            'Chicken Dum Biryani': 'images/chicken_biryani.jpg',
+            'Mutton Biryani': 'images/chicken_biryani.jpg',
+            'Veg Biryani': 'images/biryani.jpg',
+            'Seekh Kebab': 'images/kebab.jpg',
+            'Paneer Tikka': 'images/paneer_tikka.jpg',
+            'Butter Naan': 'images/naan.jpg',
+            'Garlic Naan': 'images/naan.jpg',
+            'Raita': 'images/raita.jpg',
+            'Phirni': 'images/phirni.jpg',
+            'Gulab Jamun': 'images/gulab_jamun.jpg',
+            'Mango Lassi': 'images/lassi.jpg',
+
+            // Dosa Kingdom
+            'Masala Dosa': 'images/dosa.jpg',
+            'Ghee Roast Dosa': 'images/dosa.jpg',
+            'Mysore Masala Dosa': 'images/dosa.jpg',
+            'Onion Rava Dosa': 'images/dosa.jpg',
+            'Cheese Dosa': 'images/dosa.jpg',
+            'Set Dosa': 'images/dosa.jpg',
+            'Idli Vada Combo': 'images/idli_vada.jpg',
+            'Poori Sagu': 'images/poori.jpg',
+            'Filter Coffee': 'images/coffee.jpg',
+            'Badam Milk': 'images/lassi.jpg',
+
+            // Delhi Zaika Express
+            'Chicken Tikka Roll': 'images/roll.jpg',
+            'Paneer Kathi Roll': 'images/roll.jpg',
+            'Butter Chicken': 'images/butter_chicken.jpg',
+            'Dal Makhani': 'images/dal_makhani.jpg',
+            'Kadhai Paneer': 'images/kadhai_paneer.jpg',
+            'Tandoori Roti': 'images/naan.jpg',
+            'Tandoori Chicken Full': 'images/kebab.jpg',
+            'Sweet Lassi': 'images/lassi.jpg',
+            'Masala Chai': 'images/tea.jpg',
+
+            // Mumbai Chaat & Thali
+            'Veg Thali': 'images/thali.jpg',
+            'Special Rajasthani Thali': 'images/thali.jpg',
+            'Deluxe Maharaja Thali': 'images/thali.jpg',
+            'Pav Bhaji': 'images/chaat.jpg',
+            'Pani Puri (8 pcs)': 'images/poori.jpg',
+            'Sev Puri': 'images/poori.jpg',
+            'Dahi Puri': 'images/poori.jpg',
+            'Masala Chaas': 'images/raita.jpg',
+            'Kokum Sharbat': 'images/cooler.jpg',
+
+            // Royal Sweets & Desserts
+            'Kesar Rasmalai (2 pcs)': 'images/rasmalai.jpg',
+            'Gajar Ka Halwa (150g)': 'images/halwa.jpg',
+            'Royal Saffron Phirni': 'images/phirni.jpg',
+            'Mango Kulfi on Stick': 'images/kulfi.jpg',
+            'Rabri with Jalebi': 'images/halwa.jpg',
+            'Royal Thandai': 'images/lassi.jpg',
+            'Fresh Lime Soda': 'images/cooler.jpg'
+        };
+
+        function getDishImageUrl(name) {
+            if (!name) return 'images/biryani.jpg';
+            if (DISH_IMAGES[name]) return DISH_IMAGES[name];
+            const n = name.toLowerCase();
+
+            // Specific dishes / keywords
+            if (n.includes('chicken biryani') || n.includes('mutton biryani')) return 'images/chicken_biryani.jpg';
+            if (n.includes('biryani') || n.includes('pulao') || n.includes('rice')) return 'images/biryani.jpg';
+            if (n.includes('dosa')) return 'images/dosa.jpg';
+            if (n.includes('idli') || n.includes('vada')) return 'images/idli_vada.jpg';
+            if (n.includes('poori') || n.includes('puri')) return 'images/poori.jpg';
+            if (n.includes('pav bhaji') || n.includes('bhaji') || n.includes('chaat') || n.includes('bhel')) return 'images/chaat.jpg';
+            if (n.includes('paneer tikka')) return 'images/paneer_tikka.jpg';
+            if (n.includes('kadhai paneer') || n.includes('kadai paneer') || n.includes('paneer')) return 'images/kadhai_paneer.jpg';
+            if (n.includes('butter chicken') || n.includes('murgh')) return 'images/butter_chicken.jpg';
+            if (n.includes('dal') || n.includes('makhani') || n.includes('lentil')) return 'images/dal_makhani.jpg';
+            if (n.includes('kebab') || n.includes('seekh') || n.includes('tikka') || n.includes('tandoori')) return 'images/kebab.jpg';
+            if (n.includes('roll') || n.includes('wrap') || n.includes('kathi') || n.includes('frankie')) return 'images/roll.jpg';
+            if (n.includes('thali') || n.includes('meal') || n.includes('platter')) return 'images/thali.jpg';
+            if (n.includes('naan') || n.includes('roti') || n.includes('paratha') || n.includes('kulcha') || n.includes('bread')) return 'images/naan.jpg';
+            if (n.includes('raita') || n.includes('curd') || n.includes('yogurt')) return 'images/raita.jpg';
+            if (n.includes('coffee')) return 'images/coffee.jpg';
+            if (n.includes('tea') || n.includes('chai')) return 'images/tea.jpg';
+            if (n.includes('badam milk') || n.includes('thandai') || n.includes('lassi') || n.includes('milkshake')) return 'images/lassi.jpg';
+            if (n.includes('chaas') || n.includes('buttermilk')) return 'images/raita.jpg';
+            if (n.includes('soda') || n.includes('cooler') || n.includes('lime') || n.includes('lemon') || n.includes('sharbat') || n.includes('mojito') || n.includes('juice')) return 'images/cooler.jpg';
+            if (n.includes('rasmalai')) return 'images/rasmalai.jpg';
+            if (n.includes('phirni') || n.includes('kheer')) return 'images/phirni.jpg';
+            if (n.includes('halwa')) return 'images/halwa.jpg';
+            if (n.includes('kulfi')) return 'images/kulfi.jpg';
+            if (n.includes('gulab jamun') || n.includes('jamun')) return 'images/gulab_jamun.jpg';
+            if (n.includes('jalebi') || n.includes('rabri')) return 'images/halwa.jpg';
+            if (n.includes('sweet') || n.includes('dessert')) return 'images/gulab_jamun.jpg';
+            if (n.includes('chicken') || n.includes('mutton') || n.includes('meat') || n.includes('fish')) return 'images/butter_chicken.jpg';
+            return 'images/biryani.jpg';
+        }
+
+        // Menu Modal
+        async function openMenuModal() {
+            try {
+                const data = await apiFetch('/restaurant/menu');
+                if (data && data.success) {
+                    const list = document.getElementById('full-menu-list');
+                    list.innerHTML = data.menu_items.map(it => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:#F6F3FB;border-radius:12px">
+                    <div style="display:flex;align-items:center;gap:12px">
+                        <img src="${getDishImageUrl(it.name)}" alt="${it.name}" style="width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0;box-shadow:0 1px 4px rgba(30,18,51,0.08)" onerror="this.style.display='none'">
+                        <div>
+                            <div style="font-weight:700;font-size:14px">${it.name} <span style="font-size:12px;color:#6A5F7E">(${it.category_name})</span></div>
+                            <div style="font-size:13px;color:#1E1233">₹${it.price.toFixed(0)} · Stock: ${it.stock_quantity}</div>
+                        </div>
+                    </div>
+                    <button class="sw ${it.is_available ? '' : 'off'}" onclick="toggleDishStock(${it.item_id})"><i></i></button>
+                </div>
+            `).join('');
+                    document.getElementById('menu-modal').style.display = 'flex';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function closeMenuModal() {
+            document.getElementById('menu-modal').style.display = 'none';
+        }
+
+        async function addNewDish() {
+            const name = document.getElementById('dish-name').value.trim();
+            const price = parseFloat(document.getElementById('dish-price').value);
+            const category_id = parseInt(document.getElementById('dish-category').value);
+            const is_veg = document.querySelector('input[name="dish_veg"]:checked').value === '1';
+
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Please enter a valid dish name and price.');
+                return;
+            }
+
+            try {
+                const data = await apiFetch('/restaurant/menu', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, category_id, is_veg })
+                });
+                if (data && data.success) {
+                    showToast('New dish added to menu!');
+                    document.getElementById('dish-name').value = '';
+                    document.getElementById('dish-price').value = '';
+                    openMenuModal();
+                    fetchDashboard();
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Monthly Report Modal
+        async function openReportModal() {
+            try {
+                const data = await apiFetch('/restaurant/reports/monthly');
+                if (data && data.success && data.report) {
+                    const r = data.report;
+                    document.getElementById('report-content').innerHTML = `
+                <div style="background:#F6F3FB;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px">
+                    <div style="font-size:18px;font-weight:800" class="h">${r.restaurant_name} Monthly Performance</div>
+                    <div style="display:flex;justify-content:space-between"><span>Total Orders:</span><b>${r.total_orders}</b></div>
+                    <div style="display:flex;justify-content:space-between"><span>Delivered Orders:</span><b>${r.delivered_orders}</b></div>
+                    <div style="display:flex;justify-content:space-between"><span>Cancelled Orders:</span><b>${r.cancelled_orders}</b></div>
+                    <div style="display:flex;justify-content:space-between"><span>Gross Food Sales:</span><b>₹${r.gross_sales.toFixed(2)}</b></div>
+                    <div style="display:flex;justify-content:space-between;color:#176B3A"><span>Net Revenue:</span><b>₹${r.net_revenue.toFixed(2)}</b></div>
+                    <div style="display:flex;justify-content:space-between"><span>Average Ticket Size:</span><b>₹${r.avg_ticket.toFixed(2)}</b></div>
+                </div>
+            `;
+                    document.getElementById('report-modal').style.display = 'flex';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').style.display = 'none';
+        }
+
+        // Polling and Auto-reconnection
+        window.addEventListener('DOMContentLoaded', () => {
+            setDateHeader();
+            checkAuth();
+            pollTimer = setInterval(() => {
+                if (document.getElementById('auth-modal').style.display !== 'flex') {
+                    fetchDashboard();
+                }
+            }, 5000);
+
+            reconnectTimer = setInterval(async () => {
+                const off = document.getElementById('offline-card');
+                if (off.style.display === 'flex') {
+                    try {
+                        const res = await fetch(`${CONFIG.API_BASE}/health`);
+                        const data = await res.json();
+                        if (data.status === 'ok') {
+                            showOffline(false);
+                            checkAuth();
+                        }
+                    } catch (err) { }
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crave Rider - Delivery Partner App</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;display:flex;justify-content:center;background:#E2DBF0;font-family:'DM Sans',sans-serif;color:#1E1233}
+.app{font-family:'DM Sans',sans-serif;color:#1E1233;width:390px;height:844px;box-sizing:border-box;background:#E8E2F4;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.h{font-family:'Bricolage Grotesque',sans-serif}
+button{font-family:inherit;cursor:pointer}
+.pill{background:#fff;border-radius:999px;padding:0 16px;height:44px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(30,18,51,.18);border:0;transition:transform .2s}
+.pill:active{transform:scale(0.96)}
+.kpi{flex:1;background:#F6F3FB;border-radius:16px;padding:12px 14px;transition:transform .3s}
+.kpi:hover{transform:translateY(-4px)}
+.kpi b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800}
+.kpi span{font-size:12px;color:#6A5F7E}
+.step{display:flex;gap:14px;align-items:flex-start}
+.dot{width:16px;height:16px;border-radius:50%;box-sizing:border-box;flex:none;margin-top:3px}
+.map3d{perspective:700px;overflow:hidden;height:340px;background:#E8E2F4}
+.plane{transform-origin:50% 100%;transform:rotateX(40deg) scale(1.5) translateY(-6px);animation:drift 6s ease-in-out infinite alternate}
+@keyframes drift{to{transform:rotateX(48deg) scale(1.5) translateY(2px)}}
+.route{stroke-dasharray:640;stroke-dashoffset:640;animation:draw 2.4s .5s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.pulse{transform-box:fill-box;transform-origin:center;animation:pulse 1.8s infinite}
+@keyframes pulse{from{transform:scale(1);opacity:.7}to{transform:scale(3.2);opacity:0}}
+.sheet{animation:up .9s .2s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes up{from{transform:translateY(140px);opacity:0}}
+.nudge{animation:nudge 1.8s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(18px)}}
+.shimmer{background:linear-gradient(90deg,#A99FC4 0,#fff 50%,#A99FC4 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 2.4s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.pill{animation:up .7s .6s backwards}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.route{stroke-dashoffset:0}}
+
+/* Slider Bar Component */
+.slider-track{position:relative;height:64px;border-radius:32px;background:#1E1233;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;padding-left:40px;user-select:none;touch-action:none}
+.slider-handle{position:absolute;left:6px;top:6px;width:52px;height:52px;border-radius:50%;border:0;background:#FFC233;color:#1E1233;display:flex;align-items:center;justify-content:center;cursor:grab;transition:box-shadow .2s}
+.slider-handle:active{cursor:grabbing;box-shadow:0 0 16px rgba(255,194,51,0.6)}
+
+/* Waiting view */
+.waiting-view{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 20px;gap:12px}
+.radar{width:64px;height:64px;border-radius:50%;background:#FFEDBF;display:flex;align-items:center;justify-content:center;position:relative}
+.radar::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid #D8391F;animation:ripple 2s infinite}
+@keyframes ripple{to{transform:scale(2);opacity:0}}
+.toast{position:absolute;top:20px;left:50%;transform:translateX(-50%);background:#1E1233;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;font-weight:700;z-index:999;box-shadow:0 8px 20px rgba(30,18,51,0.3);display:none;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <div id="toast" class="toast"></div>
+
+    <!-- 3D Map Section -->
+    <div style="position:relative;height:340px;flex:none">
+        <div class="map3d">
+            <div class="plane">
+                <svg width="390" height="340" viewBox="0 0 390 340" role="img" aria-label="Route from restaurant to customer, 3.2 km" style="display:block">
+                    <rect width="390" height="340" fill="#E8E2F4"/>
+                    <rect x="250" y="40" width="110" height="90" rx="14" fill="#C7E6CF"/>
+                    <rect x="20" y="190" width="90" height="80" rx="14" fill="#C7E6CF"/>
+                    <g stroke="#fff" stroke-width="14" stroke-linecap="round" fill="none">
+                        <path d="M-10 110H400"/>
+                        <path d="M-10 240H400"/>
+                        <path d="M90 -10V350"/>
+                        <path d="M230 -10V350"/>
+                        <path d="M340 -10V350"/>
+                    </g>
+                    <path class="route" d="M90 240V110H230V240H340" stroke="#D8391F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle class="pulse" cx="90" cy="240" r="14" fill="#FFC233"/>
+                    <circle cx="90" cy="240" r="14" fill="#FFC233" stroke="#1E1233" stroke-width="3"/>
+                    <rect x="326" y="226" width="28" height="28" rx="8" fill="#1E1233"/>
+                    <circle cx="230" cy="110" r="9" fill="#fff" stroke="#D8391F" stroke-width="4"/>
+                    <circle r="8" fill="#1E1233" stroke="#fff" stroke-width="3">
+                        <animateMotion dur="6s" repeatCount="indefinite" path="M90 240V110H230V240H340"/>
+                    </circle>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Floating Top Status Pills -->
+        <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;z-index:20">
+            <button class="pill" id="online-pill" onclick="toggleOnlineStatus()">
+                <span id="online-dot" style="width:10px;height:10px;border-radius:50%;background:#176B3A"></span>
+                <span id="online-text">You're online</span>
+            </button>
+            <div class="pill" id="earnings-pill">₹1,240 today</div>
+        </div>
+
+        <div style="position:absolute;top:66px;right:16px;z-index:20">
+            <a href="/logout" style="background:#fff;border-radius:999px;padding:6px 12px;font-size:11px;font-weight:700;color:#D8391F;text-decoration:none;box-shadow:0 2px 6px rgba(30,18,51,0.15)">Logout</a>
+        </div>
+    </div>
+
+    <!-- Bottom Sheet -->
+    <div class="sheet" style="flex:1;margin-top:-28px;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px 18px;display:flex;flex-direction:column;gap:14px;position:relative;z-index:30">
+        <div style="width:40px;height:4px;border-radius:2px;background:#D5CCE6;align-self:center"></div>
+
+        <!-- ACTIVE DELIVERY VIEW -->
+        <div id="active-task-view" style="display:flex;flex-direction:column;gap:14px;flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                <div>
+                    <h1 class="h" id="task-headline" style="margin:0;font-size:28px;font-weight:800;letter-spacing:-.02em">New delivery</h1>
+                    <div id="task-subline" style="font-size:14px;color:#6A5F7E;margin-top:2px">Order #2841, 2 items</div>
+                </div>
+                <span id="task-payout" style="background:#FFEDBF;color:#7A4300;border-radius:12px;padding:6px 12px;font-weight:800;font-size:18px">₹68</span>
+            </div>
+
+            <!-- 3 KPI Cards -->
+            <div style="display:flex;gap:10px">
+                <div class="kpi"><b id="kpi-distance">3.2 km</b><span>Total distance</span></div>
+                <div class="kpi"><b id="kpi-est-time">14 min</b><span>Est. time</span></div>
+                <div class="kpi"><b id="kpi-to-pickup">6 min</b><span>To pickup</span></div>
+            </div>
+
+            <!-- 2-Step Timeline -->
+            <div style="position:relative;display:flex;flex-direction:column;gap:18px">
+                <div style="position:absolute;left:7px;top:14px;bottom:30px;width:2px;background:#D5CCE6"></div>
+
+                <!-- Step 1: Restaurant Pickup -->
+                <div class="step">
+                    <span class="dot" id="dot-pickup" style="background:#FFC233;border:3px solid #1E1233"></span>
+                    <div style="flex:1">
+                        <div style="font-weight:700;font-size:16px" id="pickup-rest-name">Ember &amp; Rice</div>
+                        <div style="font-size:13px;color:#6A5F7E" id="pickup-rest-addr">Pickup, 4th Block Market</div>
+                    </div>
+                    <button aria-label="Call restaurant" onclick="callEntity('restaurant')" style="width:44px;height:44px;border-radius:50%;border:1px solid #D5CCE6;background:#fff;display:flex;align-items:center;justify-content:center;color:#1E1233">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17v3a2 2 0 01-2 2A18 18 0 012 4a2 2 0 012-2h3l2 5-2 1a12 12 0 006 6l1-2z"/></svg>
+                    </button>
+                </div>
+
+                <!-- Step 2: Customer Drop -->
+                <div class="step">
+                    <span class="dot" id="dot-drop" style="background:#1E1233"></span>
+                    <div style="flex:1">
+                        <div style="font-weight:700;font-size:16px" id="drop-cust-name">Lakeview Apartments</div>
+                        <div style="font-size:13px;color:#6A5F7E" id="drop-cust-addr">Drop, Flat 204, Tower B</div>
+                    </div>
+                    <button aria-label="Call customer" onclick="callEntity('customer')" style="width:44px;height:44px;border-radius:50%;border:1px solid #D5CCE6;background:#fff;display:flex;align-items:center;justify-content:center;color:#1E1233">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17v3a2 2 0 01-2 2A18 18 0 012 4a2 2 0 012-2h3l2 5-2 1a12 12 0 006 6l1-2z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div style="flex:1"></div>
+
+            <!-- Slide to Confirm Control -->
+            <div class="slider-track" id="slider-track">
+                <span class="shimmer" id="slider-text">Slide to confirm pickup</span>
+                <button class="slider-handle nudge" id="slider-btn" aria-label="Confirm slide action" onclick="simulateSlide()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- WAITING FOR DELIVERY VIEW (When no active task) -->
+        <div id="waiting-task-view" class="waiting-view">
+            <div class="radar">
+                <span class="h" style="font-size:24px;color:#D8391F">🛵</span>
+            </div>
+            <div class="h" style="font-size:20px;font-weight:800">Waiting for next order</div>
+            <div style="font-size:14px;color:#6A5F7E">You are online and in high-demand area Koramangala. Orders will appear automatically.</div>
+        </div>
+
+        <!-- Footer Stats -->
+        <div style="display:flex;justify-content:center;gap:18px;font-size:13px;color:#6A5F7E">
+            <span id="trips-today-text">14 trips today</span>
+            <span id="hours-today-text">5.2 hrs online</span>
+        </div>
+    </div>
+</div>
+
+<script>
+let partnerData = null;
+let activeDelivery = null;
+let pollTimer = null;
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2500);
+}
+
+// Fetch dashboard telemetry
+async function fetchDeliveryData() {
+    try {
+        const res = await fetch('/api/delivery/dashboard');
+        const data = await res.json();
+        if (data.success) {
+            partnerData = data.partner;
+            activeDelivery = data.active_delivery;
+
+            // Online status pill
+            const isOnline = data.partner.is_online === 1;
+            document.getElementById('online-dot').style.background = isOnline ? '#176B3A' : '#A79FBA';
+            document.getElementById('online-text').textContent = isOnline ? "You're online" : "You're offline";
+
+            // Earnings and Trips
+            document.getElementById('earnings-pill').textContent = `₹${data.earnings_today.toLocaleString('en-IN')} today`;
+            document.getElementById('trips-today-text').textContent = `${data.trips_today} trips today`;
+            document.getElementById('hours-today-text').textContent = `${data.partner.hours_online} hrs online`;
+
+            // Active delivery rendering
+            renderDeliveryTask(activeDelivery);
+        }
+    } catch (e) {
+        console.error('Failed to load delivery data', e);
+    }
+}
+
+// Render active delivery task
+function renderDeliveryTask(delivery) {
+    const activeView = document.getElementById('active-task-view');
+    const waitingView = document.getElementById('waiting-task-view');
+
+    if (!delivery) {
+        activeView.style.display = 'none';
+        waitingView.style.display = 'flex';
+        return;
+    }
+
+    activeView.style.display = 'flex';
+    waitingView.style.display = 'none';
+
+    document.getElementById('task-headline').textContent = delivery.delivery_status === 'picked_up' ? 'En Route to Drop' : 'New delivery';
+    document.getElementById('task-subline').textContent = `Order #${delivery.order_id}, ${delivery.items_count || 2} items`;
+    document.getElementById('task-payout').textContent = `₹${delivery.delivery_fee_earned.toFixed(0)}`;
+
+    document.getElementById('kpi-distance').textContent = `${delivery.distance_km || 3.2} km`;
+    document.getElementById('kpi-est-time').textContent = delivery.delivery_status === 'picked_up' ? '8 min' : '14 min';
+    document.getElementById('kpi-to-pickup').textContent = delivery.delivery_status === 'picked_up' ? 'Done' : '6 min';
+
+    document.getElementById('pickup-rest-name').textContent = delivery.restaurant_name;
+    document.getElementById('pickup-rest-addr').textContent = `Pickup, ${delivery.restaurant_address}`;
+
+    document.getElementById('drop-cust-name').textContent = `${delivery.customer_name} (${delivery.address_label || 'Home'})`;
+    document.getElementById('drop-cust-addr').textContent = `Drop, ${delivery.drop_address}`;
+
+    // Timeline dots
+    if (delivery.delivery_status === 'picked_up') {
+        document.getElementById('dot-pickup').style.background = '#176B3A';
+        document.getElementById('dot-pickup').style.borderColor = '#176B3A';
+        document.getElementById('dot-drop').style.background = '#FFC233';
+        document.getElementById('slider-text').textContent = 'Slide to confirm delivery';
+    } else {
+        document.getElementById('dot-pickup').style.background = '#FFC233';
+        document.getElementById('dot-pickup').style.borderColor = '#1E1233';
+        document.getElementById('dot-drop').style.background = '#1E1233';
+        document.getElementById('slider-text').textContent = 'Slide to confirm pickup';
+    }
+
+    // Reset slider button position
+    const btn = document.getElementById('slider-btn');
+    btn.style.left = '6px';
+}
+
+// Toggle Online Status
+async function toggleOnlineStatus() {
+    if (!partnerData) return;
+    const nextStatus = partnerData.is_online === 1 ? 0 : 1;
+    try {
+        const res = await fetch('/api/delivery/status', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({is_online: nextStatus})
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message);
+            fetchDeliveryData();
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+// Call button handler
+function callEntity(target) {
+    if (!activeDelivery) return;
+    if (target === 'restaurant') {
+        alert(`Calling ${activeDelivery.restaurant_name}: ${activeDelivery.restaurant_phone || '080-41235678'}`);
+    } else {
+        alert(`Calling Customer ${activeDelivery.customer_name}: ${activeDelivery.customer_phone || '9876543210'}`);
+    }
+}
+
+// Slide-to-confirm action
+async function simulateSlide() {
+    if (!activeDelivery) return;
+    const btn = document.getElementById('slider-btn');
+    const track = document.getElementById('slider-track');
+    const maxLeft = track.offsetWidth - btn.offsetWidth - 12;
+
+    // Smooth slide animation to right
+    btn.classList.remove('nudge');
+    btn.style.transition = 'left 0.3s ease';
+    btn.style.left = `${maxLeft}px`;
+
+    setTimeout(async () => {
+        if (activeDelivery.delivery_status === 'assigned') {
+            // Confirm Pickup
+            try {
+                const res = await fetch(`/api/delivery/order/${activeDelivery.order_id}/pickup`, {method: 'POST'});
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message);
+                    fetchDeliveryData();
+                } else {
+                    alert(data.error);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        } else if (activeDelivery.delivery_status === 'picked_up') {
+            // Confirm Delivery
+            try {
+                const res = await fetch(`/api/delivery/order/${activeDelivery.order_id}/drop`, {method: 'POST'});
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message);
+                    fetchDeliveryData();
+                } else {
+                    alert(data.error);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        btn.style.left = '6px';
+        btn.classList.add('nudge');
+    }, 350);
+}
+
+// Drag gesture support for slider
+(function initDraggableSlider() {
+    const btn = document.getElementById('slider-btn');
+    const track = document.getElementById('slider-track');
+    let isDragging = false;
+    let startX = 0;
+
+    function onStart(e) {
+        if (!activeDelivery) return;
+        isDragging = true;
+        startX = (e.touches ? e.touches[0].clientX : e.clientX) - btn.offsetLeft;
+        btn.classList.remove('nudge');
+        btn.style.transition = 'none';
+    }
+
+    function onMove(e) {
+        if (!isDragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const maxLeft = track.offsetWidth - btn.offsetWidth - 12;
+        let newLeft = clientX - startX;
+        if (newLeft < 6) newLeft = 6;
+        if (newLeft > maxLeft) newLeft = maxLeft;
+        btn.style.left = `${newLeft}px`;
+
+        if (newLeft >= maxLeft * 0.85) {
+            isDragging = false;
+            simulateSlide();
+        }
+    }
+
+    function onEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        btn.style.transition = 'left 0.2s';
+        btn.style.left = '6px';
+        btn.classList.add('nudge');
+    }
+
+    btn.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    btn.addEventListener('touchstart', onStart, {passive: true});
+    window.addEventListener('touchmove', onMove, {passive: true});
+    window.addEventListener('touchend', onEnd);
+})();
+
+// Start polling every 5 seconds for new delivery dispatches
+window.addEventListener('DOMContentLoaded', () => {
+    fetchDeliveryData();
+    pollTimer = setInterval(fetchDeliveryData, 5000);
+});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CraveBites - Customer App</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.app{font-family:'DM Sans',sans-serif;color:#1E1233}
+.h{font-family:'Bricolage Grotesque',sans-serif}
+button{font-family:inherit;cursor:pointer}
+.chip{border:1px solid #D5CCE6;background:#fff;color:#1E1233;border-radius:999px;padding:0 16px;height:44px;font-size:14px;font-weight:500;white-space:nowrap;transition:transform .2s,background .2s}
+.chip.on{background:#D8391F;border-color:#D8391F;color:#fff;font-weight:700}
+.chip:hover{transform:translateY(-2px)}.chip:active,.cartbar:active{transform:scale(.96)}
+.cartbar{transition:transform .2s}
+.nav button{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:#6A5F7E;min-height:48px;min-width:64px;transition:transform .2s}
+.nav button:hover{transform:translateY(-3px)}
+.nav .on{color:#D8391F;font-weight:700}
+.rise{animation:rise .8s cubic-bezier(.2,.8,.2,1) backwards}
+.d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.4s}.d5{animation-delay:.55s}.d6{animation-delay:.7s}
+@keyframes rise{from{opacity:0;transform:translateY(28px) scale(.96)}}
+.stage{height:176px;perspective:900px;position:relative}
+.ring{position:absolute;left:50%;top:50%;width:112px;height:150px;margin:-78px 0 0 -56px;transform-style:preserve-3d;animation:spin 16s linear infinite}
+.stage:hover .ring{animation-play-state:paused}
+@keyframes spin{from{transform:rotateX(-10deg) rotateY(0)}to{transform:rotateX(-10deg) rotateY(-360deg)}}
+.face{position:absolute;inset:0;border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;backface-visibility:hidden;box-shadow:0 14px 26px rgba(30,18,51,.22);font-weight:700;color:#1E1233;font-size:14px}
+.face .h{font-size:52px;font-weight:800;line-height:1}
+.floor{position:absolute;left:50%;bottom:0;width:230px;height:22px;margin-left:-115px;border-radius:50%;background:rgba(30,18,51,.2);filter:blur(9px);animation:breathe 4s ease-in-out infinite}
+@keyframes breathe{50%{transform:scaleX(.8);opacity:.6}}
+.tilt{transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.tilt:hover{transform:perspective(700px) rotateX(7deg) rotateY(-5deg) translateY(-3px)}
+.fill{display:block;height:100%;background:#FFC233;animation:fillup 4s ease-in-out infinite alternate}
+@keyframes fillup{from{width:35%}to{width:92%}}
+.rv{position:relative}
+.rv::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #FFC233;animation:ripple 1.8s infinite}
+@keyframes ripple{to{transform:scale(1.9);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+body{margin:0;display:flex;justify-content:center;background:#E2DBF0}</style>
+</head>
+<body>
+<div class="app" style="width:390px;height:844px;box-sizing:border-box;background:#F6F3FB;display:flex;flex-direction:column;overflow:hidden">
+<div class="rise d1" style="padding:18px 20px 0;display:flex;justify-content:space-between;align-items:center">
+<div>
+<div style="font-size:12px;color:#6A5F7E">Deliver to</div>
+<button style="background:none;border:0;padding:0;min-height:40px;display:flex;align-items:center;gap:4px;font-size:16px;font-weight:700;color:#1E1233">Home, 4th Block <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+</div>
+<button aria-label="Notifications" style="width:44px;height:44px;border-radius:50%;border:1px solid #D5CCE6;background:#fff;display:flex;align-items:center;justify-content:center;color:#1E1233"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></button>
+</div>
+<h1 class="h rise d2" style="margin:2px 20px 0;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:-.02em">What are you craving tonight?</h1>
+<div class="rise d3" style="margin:14px 20px 0;position:relative">
+<label for="q" style="position:absolute;left:-9999px">Search dishes or restaurants</label>
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A5F7E" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="position:absolute;left:16px;top:16px"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+<input id="q" placeholder="Search biryani, dosa, thali" style="width:100%;box-sizing:border-box;height:52px;border-radius:16px;border:1px solid #D5CCE6;background:#fff;padding:0 16px 0 46px;font:inherit;font-size:15px">
+</div>
+<div class="rise d3" style="display:flex;gap:8px;padding:12px 20px 0;overflow:hidden">
+<button class="chip on">Biryani</button><button class="chip">Dosa</button><button class="chip">Thali</button><button class="chip">Pizza</button><button class="chip">Desserts</button>
+</div>
+<h2 class="h rise d4" style="margin:12px 20px 0;font-size:20px;font-weight:700">Tonight's picks</h2>
+<div class="stage rise d4" role="img" aria-label="Rotating carousel of popular dishes">
+<div class="ring">
+<div class="face" style="transform:rotateY(0deg) translateZ(122px);background:#FFEDBF"><span class="h" style="color:#B35C00">B</span>Dum Biryani<span style="font-size:13px">₹289</span></div>
+<div class="face" style="transform:rotateY(72deg) translateZ(122px);background:#D9EFE1"><span class="h" style="color:#176B3A">D</span>Masala Dosa<span style="font-size:13px">₹99</span></div>
+<div class="face" style="transform:rotateY(144deg) translateZ(122px);background:#FFD6D6"><span class="h" style="color:#A3162A">T</span>Veg Thali<span style="font-size:13px">₹180</span></div>
+<div class="face" style="transform:rotateY(216deg) translateZ(122px);background:#FFD9E8"><span class="h" style="color:#9A1B55">S</span>Seekh Kebab<span style="font-size:13px">₹220</span></div>
+<div class="face" style="transform:rotateY(288deg) translateZ(122px);background:#FFF1B8"><span class="h" style="color:#7A5A00">P</span>Phirni<span style="font-size:13px">₹80</span></div>
+</div>
+<div class="floor"></div>
+</div>
+<div class="tilt rise d5" style="margin:10px 20px 0;background:#2D1B4E;color:#fff;border-radius:22px;padding:16px 18px">
+<div class="h" style="font-size:22px;font-weight:700">Arriving in 12 min</div>
+<div style="font-size:13px;color:#CBBFE6;margin-top:2px">Ember &amp; Rice, order #2841</div>
+<div style="display:flex;gap:6px;margin-top:12px">
+<span style="flex:1;height:6px;border-radius:3px;background:#FFC233"></span><span style="flex:1;height:6px;border-radius:3px;background:#FFC233"></span><span style="flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.25);overflow:hidden"><span class="fill"></span></span><span style="flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.25)"></span>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:#CBBFE6;margin-top:6px"><span>Confirmed</span><span>Cooking</span><span>On the way</span><span>Delivered</span></div>
+<div style="display:flex;align-items:center;gap:12px;margin-top:10px">
+<span class="rv" style="width:40px;height:40px;border-radius:50%;background:#FFC233;color:#1E1233;font-weight:800;display:flex;align-items:center;justify-content:center">R</span>
+<div style="flex:1"><div style="font-weight:700;font-size:15px">Ravi is 1.4 km away</div><div style="font-size:12px;color:#CBBFE6">Carrying your order</div></div>
+<button style="height:44px;padding:0 18px;border-radius:14px;border:1px solid rgba(255,255,255,.5);background:none;color:#fff;font-weight:700">Call</button>
+</div>
+</div>
+<div style="flex:1"></div>
+<button class="cartbar rise d6" style="margin:0 16px 10px;height:56px;border-radius:18px;border:0;background:#1E1233;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 20px;font-size:15px;font-weight:700"><span>2 items · ₹498</span><span style="color:#FFC233">View cart</span></button>
+<div class="nav" style="display:flex;justify-content:space-around;background:#fff;border-top:1px solid #E2DBF0;padding:6px 0 10px">
+<button class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v10H3z"/></svg>Home</button>
+<button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
+<button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>Orders</button>
+<button><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Profile</button>
+</div>
+</div>
+</body>
+</html>

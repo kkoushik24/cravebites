@@ -1,0 +1,15 @@
+{
+  "appId": "com.dabba.customer",
+  "appName": "CraveBites",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
+
